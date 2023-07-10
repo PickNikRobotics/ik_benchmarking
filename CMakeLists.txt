@@ -29,6 +29,9 @@ target_include_directories(run_ik_benchmarks PUBLIC
   $<INSTALL_INTERFACE:include>)
 target_link_libraries(run_ik_benchmarks rclcpp::rclcpp fmt::fmt)
 
+#link against interfaces (including actions) generated in the same project
+rosidl_target_interfaces(run_ik_benchmarks ${PROJECT_NAME} "rosidl_typesupport_cpp")
+
 target_compile_features(run_ik_benchmarks PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 ament_target_dependencies(
   run_ik_benchmarks
