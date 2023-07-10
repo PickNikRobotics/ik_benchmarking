@@ -1,0 +1,10 @@
+# Goal
+string solver_name
+string csv_filename
+---
+# Result
+float64 success_rate
+float64 average_solve_time
+---
+# Feedback
+int32 trials_completed
