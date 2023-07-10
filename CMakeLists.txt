@@ -14,6 +14,15 @@ find_package(rclcpp REQUIRED)
 find_package(moveit_core REQUIRED)
 find_package(moveit_ros_planning_interface REQUIRED)
 
+# For adding the IKBenchmark action
+find_package(rclcpp_action REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
+
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "action/IKBenchmark.action"
+  DEPENDENCIES std_msgs
+)
+
 add_executable(run_ik_benchmarks src/run_ik_benchmarks.cpp)
 target_include_directories(run_ik_benchmarks PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -26,6 +35,8 @@ ament_target_dependencies(
   "moveit_core"
   "moveit_ros_planning_interface"
   "rclcpp"
+  "rclcpp_action"
+  "rosidl_default_runtime"
 )
 
 install(TARGETS run_ik_benchmarks
