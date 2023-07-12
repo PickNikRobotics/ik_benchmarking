@@ -5,6 +5,7 @@ string csv_filename
 # Result
 float64 success_rate
 float64 average_solve_time
+bool calculation_done
 ---
 # Feedback
 int32 trials_completed
