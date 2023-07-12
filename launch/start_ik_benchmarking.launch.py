@@ -58,9 +58,9 @@ def generate_launch_description():
                 )
 
     # Start benchmarking node with required robot description and move_group parameters
-    benchmarks_node = Node(
+    benchmarking_node = Node(
         package="ik_benchmarking",
-        executable="run_ik_benchmarks",
+        executable="ik_benchmarking_server",
         output="screen",
         parameters=[
             moveit_config.robot_description,
@@ -70,4 +70,4 @@ def generate_launch_description():
         ],
     )
 
-    return LaunchDescription([move_group_arg, moveit_config_pkg_arg, kinematics_file_arg, sample_size_arg, benchmarks_node])
+    return LaunchDescription([move_group_arg, moveit_config_pkg_arg, kinematics_file_arg, sample_size_arg, benchmarking_node])
