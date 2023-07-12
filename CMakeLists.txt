@@ -23,18 +23,37 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   DEPENDENCIES std_msgs
 )
 
-add_executable(run_ik_benchmarks src/run_ik_benchmarks.cpp)
-target_include_directories(run_ik_benchmarks PUBLIC
+add_executable(ik_benchmarking_server src/ik_benchmarking.cpp src/ik_benchmarking_server.cpp)
+add_executable(ik_benchmarking_client src/ik_benchmarking_client.cpp)
+
+target_include_directories(ik_benchmarking_server PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
-target_link_libraries(run_ik_benchmarks rclcpp::rclcpp fmt::fmt)
 
-#link against interfaces (including actions) generated in the same project
-rosidl_target_interfaces(run_ik_benchmarks ${PROJECT_NAME} "rosidl_typesupport_cpp")
+target_include_directories(ik_benchmarking_client PUBLIC
+$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+$<INSTALL_INTERFACE:include>)
 
-target_compile_features(run_ik_benchmarks PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+target_link_libraries(ik_benchmarking_server rclcpp::rclcpp fmt::fmt)
+target_link_libraries(ik_benchmarking_client rclcpp::rclcpp)
+
+#link against interfaces (actions) generated in the same project
+rosidl_target_interfaces(ik_benchmarking_server ${PROJECT_NAME} "rosidl_typesupport_cpp")
+rosidl_target_interfaces(ik_benchmarking_client ${PROJECT_NAME} "rosidl_typesupport_cpp")
+
+target_compile_features(ik_benchmarking_server PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+target_compile_features(ik_benchmarking_client PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+
 ament_target_dependencies(
-  run_ik_benchmarks
+  ik_benchmarking_server
+  "moveit_core"
+  "moveit_ros_planning_interface"
+  "rclcpp"
+  "rclcpp_action"
+  "rosidl_default_runtime"
+)
+ament_target_dependencies(
+  ik_benchmarking_client
   "moveit_core"
   "moveit_ros_planning_interface"
   "rclcpp"
@@ -42,7 +61,9 @@ ament_target_dependencies(
   "rosidl_default_runtime"
 )
 
-install(TARGETS run_ik_benchmarks
+install(TARGETS
+  ik_benchmarking_server
+  ik_benchmarking_client
   DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY launch
