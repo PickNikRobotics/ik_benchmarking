@@ -2,14 +2,16 @@ import os
 import sys
 import yaml
 from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument
 from launch.actions import TimerAction
+from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 from moveit_configs_utils import MoveItConfigsBuilder
 from ament_index_python.packages import get_package_share_directory
 
 
 def load_benchmarking_config(ik_benchmarking_pkg, ik_benchmarking_config):
-    # Construct the configuration file path
+    # Construct configuration file path
     file_path = os.path.join(get_package_share_directory(ik_benchmarking_pkg),
                              "config",
                              ik_benchmarking_config
@@ -104,7 +106,7 @@ def generate_launch_description():
         ],
     )
 
-    # Start benchmarking client node with the same parameters as the server, but with delay
+    # Start benchmarking client node with the same parameters as the server, but delay its launch
     benchmarking_client_node = Node(
         package="ik_benchmarking",
         executable="ik_benchmarking_client",
@@ -120,8 +122,8 @@ def generate_launch_description():
         ],
     )
 
-    # Delay the client node launch for two seconds till the server is fully started
+    # Delay the client node launch for three seconds till the server is fully started
     delayed_benchmarking_client_node = TimerAction(
-        period=2.0, actions=[benchmarking_client_node])
+        period=3.0, actions=[benchmarking_client_node])
 
     return LaunchDescription([benchmarking_server_node, delayed_benchmarking_client_node])
