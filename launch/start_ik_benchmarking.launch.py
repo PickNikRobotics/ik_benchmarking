@@ -1,64 +1,95 @@
 import os
 import sys
+import yaml
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
-from launch.substitutions import LaunchConfiguration
+from launch.actions import TimerAction
 from launch_ros.actions import Node
 from moveit_configs_utils import MoveItConfigsBuilder
 from ament_index_python.packages import get_package_share_directory
 
 
+def load_benchmarking_config(ik_benchmarking_pkg, ik_benchmarking_config):
+    # Construct the configuration file path
+    file_path = os.path.join(get_package_share_directory(ik_benchmarking_pkg),
+                             "config",
+                             ik_benchmarking_config
+                             )
+    # Open file and parse content
+    with open(file_path, "r") as config_file:
+        config_data = yaml.safe_load(config_file)
+
+    # Extract content and handle missing keys
+    def get_config_data(key):
+        value = config_data.get(key)
+        if value is None:
+            raise ValueError(f"Missing required configuration key {key}")
+        return value
+
+    moveit_config_pkg = get_config_data('moveit_config_pkg')
+    move_group = get_config_data('move_group')
+    kinematics_file = get_config_data('kinematics_file')
+    sample_size = get_config_data('sample_size')
+    ik_solver_1 = get_config_data('ik_solver_1')
+    ik_solver_2 = get_config_data('ik_solver_2')
+    ik_solver_3 = get_config_data('ik_solver_3')
+    ik_solver_1_kinematics_file = get_config_data(
+        'ik_solver_1_kinematics_file')
+    ik_solver_2_kinematics_file = get_config_data(
+        'ik_solver_2_kinematics_file')
+    ik_solver_3_kinematics_file = get_config_data(
+        'ik_solver_3_kinematics_file')
+
+    # Return a dictionary to avoid errors due to return order
+    return {
+        'moveit_config_pkg': moveit_config_pkg,
+        'move_group': move_group,
+        'kinematics_file': kinematics_file,
+        'sample_size': sample_size,
+        'ik_solver_1': ik_solver_1,
+        'ik_solver_2': ik_solver_2,
+        'ik_solver_3': ik_solver_3,
+        'ik_solver_1_kinematics_file': ik_solver_1_kinematics_file,
+        'ik_solver_2_kinematics_file': ik_solver_2_kinematics_file,
+        'ik_solver_3_kinematics_file': ik_solver_3_kinematics_file
+    }
+
+
+def get_robot_name(moveit_config_pkg):
+    parts = moveit_config_pkg.split("_")
+
+    if len(parts) < 2:
+        print(
+            "Error: The package name {moveit_config_pkg} is not standard. Please use 'robot_moveit_config'.")
+        exit(1)
+
+    robot_name = parts[0]
+    return robot_name
+
+
 def generate_launch_description():
 
-    # Declare launch arguments
-    move_group_arg = DeclareLaunchArgument(
-        "move_group", default_value="iiwa_arm", description="Move group name required for run_ik_benchmarks node"
-    )
+    ik_benchmarking_pkg = "ik_benchmarking"
+    ik_benchmarking_config = "ik_benchmarking.yaml"
+    benchmarking_config = load_benchmarking_config(
+        ik_benchmarking_pkg, ik_benchmarking_config)
 
-    moveit_config_pkg_arg = DeclareLaunchArgument(
-        'moveit_config_pkg', default_value="iiwa_moveit_config", description="Moveit config package to load robot description"
-    )
-
-    kinematics_file_arg = DeclareLaunchArgument(
-        "kinematics_file", default_value="kinematics.yaml", description="Provides information about the inverse kinematics (IK) solver to use"
-    )
-
-    sample_size_arg = DeclareLaunchArgument(
-        "sample_size", default_value="10000", description="Sets how many times the IK solution process is repeated for evaluation"
-    )
-
-    # Get parameters from launch arguments
-    move_group = LaunchConfiguration("move_group")
-    sample_size = LaunchConfiguration("sample_size")
-
-    # Extract the robot name if the moveit_config_pkg arg is provided
-    # It is usually in the form of <robot_name>_moveit_config
-    # Default values are as follows
-    robot_name = "iiwa"
-    moveit_config_pkg_name = "iiwa_moveit_config"
-    kinematics_file_name = "kinematics.yaml"
-
-    for arg in sys.argv:
-        if arg.startswith("moveit_config_pkg:="):
-            moveit_config_pkg_name = arg.split(":=")[1]
-            robot_name = moveit_config_pkg_name.split("_")[0]
-        elif arg.startswith("kinematics_file:="):
-            kinematics_file_name = arg.split(":=")[1]
+    robot_name = get_robot_name(benchmarking_config['moveit_config_pkg'])
 
     # Build moveit_config using the robot name and kinematic file
     moveit_config = (MoveItConfigsBuilder(robot_name)
                      .robot_description_kinematics(
-                        file_path=os.path.join(
-                            get_package_share_directory(moveit_config_pkg_name),
-                            "config",
-                            kinematics_file_name,
-                        )
-                    )
-                    .to_moveit_configs()
-                )
+        file_path=os.path.join(
+            get_package_share_directory(
+                benchmarking_config['moveit_config_pkg']),
+            "config",
+            benchmarking_config['kinematics_file'],
+        )
+    )
+        .to_moveit_configs()
+    )
 
-    # Start benchmarking node with required robot description and move_group parameters
-    benchmarking_node = Node(
+    # Start benchmarking server node with required robot description and move_group parameters
+    benchmarking_server_node = Node(
         package="ik_benchmarking",
         executable="ik_benchmarking_server",
         output="screen",
@@ -66,8 +97,27 @@ def generate_launch_description():
             moveit_config.robot_description,
             moveit_config.robot_description_semantic,
             moveit_config.robot_description_kinematics,
-            {"move_group": move_group, "sample_size":sample_size},
+            {
+                "move_group": benchmarking_config['move_group'],
+                "sample_size": benchmarking_config['sample_size']
+            },
         ],
     )
 
-    return LaunchDescription([move_group_arg, moveit_config_pkg_arg, kinematics_file_arg, sample_size_arg, benchmarking_node])
+    # Start benchmarking client node with the same parameters as the server
+    benchmarking_client_node = Node(
+        package="ik_benchmarking",
+        executable="ik_benchmarking_client",
+        output="screen",
+        parameters=[
+            moveit_config.robot_description,
+            moveit_config.robot_description_semantic,
+            moveit_config.robot_description_kinematics,
+            {
+                "move_group": benchmarking_config['move_group'],
+                "sample_size": benchmarking_config['sample_size']
+            },
+        ],
+    )
+
+    return LaunchDescription([benchmarking_server_node, benchmarking_client_node])
