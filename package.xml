@@ -9,12 +9,16 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
   <buildtool_depend>rosidl_default_generators</buildtool_depend>
+  
+  <buildtool_depend>ament_cmake_python</buildtool_depend>
 
   <depend>moveit_core</depend>
   <depend>moveit_ros_planning_interface</depend>
   <depend>rclcpp</depend>
   <depend>fmt</depend>
   <depend>action_msgs</depend>
+
+  <depend>rclpy</depend>
 
   <member_of_group>rosidl_interface_packages</member_of_group>
 
