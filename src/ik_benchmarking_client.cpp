@@ -17,11 +17,18 @@ int main(int argc, char const *argv[])
 
     RCLCPP_INFO(node->get_logger(), "IK Benchmarking action client started.");
 
-    // Todo: Mohamed, get the solver and output path with ros parameters
-
-    // Setup solver names for testing 
-    const auto ik_solver{"solver1"};
-    const auto csv_output_file{"solver1_output"};
+    // Get the solver and output path with ros parameters
+    std::string ik_solver{};
+    try{
+        ik_solver = node->get_parameter("ik_solver").as_string();
+    }
+    catch(const rclcpp::exceptions::ParameterNotDeclaredException& e){
+        RCLCPP_ERROR(node->get_logger(), "Ik Benchmarking client failed to load 'ik_solver' parameter. Shutting down node.");
+        rclcpp::shutdown();
+        return 1;
+    }
+    
+    const std::string csv_output_file{ik_solver+std::string("_output")};
     auto client = rclcpp_action::create_client<IKBenchmark>(node, "ik_benchmark");
     
     // Send a goal to the server
