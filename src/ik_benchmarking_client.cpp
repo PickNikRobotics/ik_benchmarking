@@ -11,7 +11,9 @@ using Client = rclcpp_action::Client<IKBenchmark>;
 int main(int argc, char const *argv[])
 {
     rclcpp::init(argc, argv);
-    auto node = rclcpp::Node::make_shared("ik_benchmarking_client");
+    rclcpp::NodeOptions node_options;
+    node_options.automatically_declare_parameters_from_overrides(true);
+    auto node = rclcpp::Node::make_shared("ik_benchmarking_client", node_options);
 
     RCLCPP_INFO(node->get_logger(), "IK Benchmarking action client started.");
 
