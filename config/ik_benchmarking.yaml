@@ -1,6 +1,5 @@
 moveit_config_pkg: iiwa_moveit_config
 move_group: iiwa_arm
-kinematics_file: kinematics.yaml
 sample_size: 10000
 ik_solver_1: KDL 
 ik_solver_1_kinematics_file: kdl_kinematics.yaml

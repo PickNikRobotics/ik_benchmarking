@@ -52,7 +52,6 @@ def load_benchmarking_config(ik_benchmarking_pkg, ik_benchmarking_config):
 
     moveit_config_pkg = get_config_data('moveit_config_pkg')
     move_group = get_config_data('move_group')
-    kinematics_file = get_config_data('kinematics_file')
     sample_size = get_config_data('sample_size')
     ik_solver_1 = get_config_data('ik_solver_1')
     ik_solver_2 = get_config_data('ik_solver_2')
@@ -68,7 +67,6 @@ def load_benchmarking_config(ik_benchmarking_pkg, ik_benchmarking_config):
     return {
         'moveit_config_pkg': moveit_config_pkg,
         'move_group': move_group,
-        'kinematics_file': kinematics_file,
         'sample_size': sample_size,
         'ik_solver_1': ik_solver_1,
         'ik_solver_2': ik_solver_2,
