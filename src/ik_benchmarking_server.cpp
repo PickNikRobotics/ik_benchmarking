@@ -42,11 +42,12 @@ void IKBenchmarkingServer::handle_accepted(const std::shared_ptr<GoalHandleIKBen
   RCLCPP_INFO(this->get_logger(), "Inside handle_accepted function");
   using namespace std::placeholders;
 
-  std::thread{std::bind(&IKBenchmarkingServer::execute, this, _1), goal_handle}.detach();
+  bool execute_once{true}; // Shutdown server node after handling one action goal to enable sequencing while collecting IK solution data
+  std::thread{std::bind(&IKBenchmarkingServer::execute, this, _1, _2), goal_handle, execute_once}.detach();
 
 }
 
-void IKBenchmarkingServer::execute(const std::shared_ptr<GoalHandleIKBenchmark> goal_handle){
+void IKBenchmarkingServer::execute(const std::shared_ptr<GoalHandleIKBenchmark> goal_handle, bool execute_once){
   RCLCPP_INFO(this->get_logger(), "Inside execute function");
   RCLCPP_INFO(this->get_logger(), "Executing goal");
 
@@ -71,6 +72,9 @@ void IKBenchmarkingServer::execute(const std::shared_ptr<GoalHandleIKBenchmark> 
   result->average_solve_time = ik_benchmarker.get_average_solve_time(); //Todo: Mohamed, check this rate
   
   goal_handle->succeed(result);
+
+  if (execute_once)
+    rclcpp::shutdown();
 }
 
 int main(int argc, char *argv[])
