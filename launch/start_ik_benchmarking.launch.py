@@ -3,9 +3,34 @@ import sys
 import yaml
 from launch import LaunchDescription
 from launch.actions import TimerAction
+from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 from moveit_configs_utils import MoveItConfigsBuilder
 from ament_index_python.packages import get_package_share_directory
+
+import launch
+from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument, OpaqueFunction
+from launch.substitutions import LaunchConfiguration
+
+# Temporary solution
+
+
+def get_cmdline_argument(arg_name):
+    for arg in sys.argv:
+        if arg.startswith(arg_name + ":="):
+            return arg.split(":=")[1]
+    return '0'
+
+# Use Opaque function
+# Check: https://answers.ros.org/question/340705/access-launch-argument-in-launchfile-ros2/
+
+# def get_argument(context, *args, **kwargs):
+#     # Access the argument from context
+#     # arg_value = LaunchConfiguration('ik_solver_number').perform(context)
+#     arg_value = context.launch_configurations['my_arg']
+#     print(f"The value of 'my_arg' is: {arg_value}")
 
 
 def load_benchmarking_config(ik_benchmarking_pkg, ik_benchmarking_config):
@@ -67,6 +92,13 @@ def get_robot_name(moveit_config_pkg):
 
 
 def generate_launch_description():
+    # Declar launch argument to decide which solver to use
+    ik_solver_arg = DeclareLaunchArgument(
+        "ik_solver_number", default_value="0", description="IK solver number corresponding to the ik_benchmarking.yaml config file. Use values of 1, 2, and 3.")
+
+    # Get parameter from launch argument
+    # ik_solver_number_value = get_argument()
+    ik_solver_value = get_cmdline_argument("ik_solver_number")
 
     ik_benchmarking_pkg = "ik_benchmarking"
     ik_benchmarking_config = "ik_benchmarking.yaml"
@@ -75,6 +107,16 @@ def generate_launch_description():
 
     robot_name = get_robot_name(benchmarking_config['moveit_config_pkg'])
 
+    # Check ik_solver value and decide kinematics_file to use
+    kinematics_file_key = ''
+    ik_solver_key = ''
+    if (ik_solver_value > '0'):
+        ik_solver_key = 'ik_solver_'+ik_solver_value
+        kinematics_file_key = 'ik_solver_'+ik_solver_value+'_kinematics_file'
+
+    print('_____________________ kinematics_file_key is _______________________',
+          kinematics_file_key)
+
     # Build moveit_config using the robot name and kinematic file
     moveit_config = (MoveItConfigsBuilder(robot_name)
                      .robot_description_kinematics(
@@ -82,7 +124,7 @@ def generate_launch_description():
             get_package_share_directory(
                 benchmarking_config['moveit_config_pkg']),
             "config",
-            benchmarking_config['kinematics_file'],
+            benchmarking_config[kinematics_file_key],
         )
     )
         .to_moveit_configs()
@@ -104,6 +146,9 @@ def generate_launch_description():
         ],
     )
 
+    print('_____________________ IK SOLVER VALUE IS _______________________',
+          benchmarking_config[ik_solver_key])
+
     # Start benchmarking client node with the same parameters as the server, but with delay
     benchmarking_client_node = Node(
         package="ik_benchmarking",
@@ -115,7 +160,8 @@ def generate_launch_description():
             moveit_config.robot_description_kinematics,
             {
                 "move_group": benchmarking_config['move_group'],
-                "sample_size": benchmarking_config['sample_size']
+                "sample_size": benchmarking_config['sample_size'],
+                "ik_solver": benchmarking_config[ik_solver_key]
             },
         ],
     )
@@ -124,4 +170,4 @@ def generate_launch_description():
     delayed_benchmarking_client_node = TimerAction(
         period=2.0, actions=[benchmarking_client_node])
 
-    return LaunchDescription([benchmarking_server_node, delayed_benchmarking_client_node])
+    return LaunchDescription([benchmarking_server_node, delayed_benchmarking_client_node, ik_solver_arg])
