@@ -44,8 +44,9 @@ def load_benchmarking_config(ik_benchmarking_pkg, ik_benchmarking_config):
         config_data = yaml.safe_load(config_file)
 
     # Extract content and handle missing keys
-    def get_config_data(key):
-        value = config_data.get(key)
+    def get_config_data(key, parent_data=None):
+        source_data = parent_data if parent_data else config_data
+        value = source_data.get(key)
         if value is None:
             raise ValueError(f"Missing required configuration key {key}")
         return value
@@ -53,15 +54,21 @@ def load_benchmarking_config(ik_benchmarking_pkg, ik_benchmarking_config):
     moveit_config_pkg = get_config_data('moveit_config_pkg')
     move_group = get_config_data('move_group')
     sample_size = get_config_data('sample_size')
-    ik_solver_1 = get_config_data('ik_solver_1')
-    ik_solver_2 = get_config_data('ik_solver_2')
-    ik_solver_3 = get_config_data('ik_solver_3')
-    ik_solver_1_kinematics_file = get_config_data(
-        'ik_solver_1_kinematics_file')
-    ik_solver_2_kinematics_file = get_config_data(
-        'ik_solver_2_kinematics_file')
-    ik_solver_3_kinematics_file = get_config_data(
-        'ik_solver_3_kinematics_file')
+
+    # Extract IK solvers details
+    # Assume three solvers are given (for simplicity)
+    ik_solvers_data = get_config_data('ik_solvers')
+    ik_solver_1_data = get_config_data('ik_solver_1', ik_solvers_data)
+    ik_solver_2_data = get_config_data('ik_solver_2', ik_solvers_data)
+    ik_solver_3_data = get_config_data('ik_solver_3', ik_solvers_data)
+
+    ik_solver_1 = ik_solver_1_data.get('name')
+    ik_solver_2 = ik_solver_2_data.get('name')
+    ik_solver_3 = ik_solver_3_data.get('name')
+
+    ik_solver_1_kinematics_file = ik_solver_1_data.get('kinematics_file')
+    ik_solver_2_kinematics_file = ik_solver_2_data.get('kinematics_file')
+    ik_solver_3_kinematics_file = ik_solver_3_data.get('kinematics_file')
 
     # Return a dictionary to avoid errors due to return order
     return {
