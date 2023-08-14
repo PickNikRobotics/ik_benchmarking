@@ -12,7 +12,6 @@ using GoalHandleIKBenchmark = rclcpp_action::ServerGoalHandle<IKBenchmark>;
 IKBenchmarkingServer::IKBenchmarkingServer(const rclcpp::NodeOptions& options):
 Node("ik_benchamrking_server", options)
 {
-  RCLCPP_INFO(this->get_logger(), "Inside IKBenchmarkingServer constructor");
   using namespace std::placeholders; 
 
   this->action_server_ = rclcpp_action::create_server<IKBenchmark>(
@@ -25,21 +24,18 @@ Node("ik_benchamrking_server", options)
 
 rclcpp_action::GoalResponse IKBenchmarkingServer::handle_goal(const rclcpp_action::GoalUUID & uuid, 
 std::shared_ptr<const IKBenchmark::Goal> goal){
-  RCLCPP_INFO(this->get_logger(), "Inside handle_goal function");
   RCLCPP_INFO(this->get_logger(), "Received IKBenchmark goal request with solver %s", goal->solver_name.c_str());
   (void)uuid;
   return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
 }
 
 rclcpp_action::CancelResponse IKBenchmarkingServer::handle_cancel(const std::shared_ptr<GoalHandleIKBenchmark> goal_handle){
-  RCLCPP_INFO(this->get_logger(), "Inside handle_cancel function");
   RCLCPP_INFO(this->get_logger(), "Received request to cancel goal");
   (void)goal_handle;
   return rclcpp_action::CancelResponse::ACCEPT;
 }
 
 void IKBenchmarkingServer::handle_accepted(const std::shared_ptr<GoalHandleIKBenchmark> goal_handle){
-  RCLCPP_INFO(this->get_logger(), "Inside handle_accepted function");
   using namespace std::placeholders;
 
   bool execute_once{true}; // Shutdown server node after handling one action goal to enable sequencing while collecting IK solution data
@@ -48,7 +44,6 @@ void IKBenchmarkingServer::handle_accepted(const std::shared_ptr<GoalHandleIKBen
 }
 
 void IKBenchmarkingServer::execute(const std::shared_ptr<GoalHandleIKBenchmark> goal_handle, bool execute_once){
-  RCLCPP_INFO(this->get_logger(), "Inside execute function");
   RCLCPP_INFO(this->get_logger(), "Executing goal");
 
   rclcpp::Rate loop_rate(1);//Todo: Mohamed, check this rate
