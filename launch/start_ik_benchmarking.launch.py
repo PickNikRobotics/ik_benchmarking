@@ -82,10 +82,16 @@ def get_robot_name(moveit_config_pkg):
 
     if len(parts) < 2:
         print(
-            "Error: The package name {moveit_config_pkg} is not standard. Please use 'robot_moveit_config'.")
+            "Error: The package name {moveit_config_pkg} is not standard. Please use 'robot_moveit_config' or 'moveit_resources_robot_moveit_config'.")
         exit(1)
 
-    robot_name = parts[0]
+    package_name_prefix = '_'.join(parts[:2])
+
+    if package_name_prefix == "moveit_resources":
+        robot_name = '_'.join(parts[:3])
+    else:
+        robot_name = parts[0]
+
     return robot_name
 
 
