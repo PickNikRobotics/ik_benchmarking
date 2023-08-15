@@ -63,25 +63,26 @@ void IKBenchmarking::initialize()
 
 void IKBenchmarking::gather_date()
 {
-  const Eigen::Isometry3d &tip_link_pose = robot_state_->getGlobalLinkTransform(tip_link_name_);
   // Collect IK solving data
   sample_size_ = node_->get_parameter("sample_size").as_int();
 
   for (size_t i = 0; i < sample_size_; ++i)
   {
-    std::vector<double> joint_values;
+    std::vector<double> random_joint_values;
 
     for (const auto &bound : joint_bounds_)
     {
       std::uniform_real_distribution<> distribution(bound.min_position,
                                                     bound.max_position);
-      joint_values.push_back(distribution(generator_));
+      random_joint_values.push_back(distribution(generator_));
     }
-    // fmt::print("Random joint values are:\n{}\n", joint_values);
+    // fmt::print("Random joint values are:\n{}\n", random_joint_values);
 
     // Solve Forward Kinematics
-    robot_state_->setJointGroupPositions(joint_model_group_, joint_values);
+    robot_state_->setJointGroupPositions(joint_model_group_, random_joint_values);
     robot_state_->updateLinkTransforms();
+
+    const Eigen::Isometry3d &tip_link_pose = robot_state_->getGlobalLinkTransform(tip_link_name_);
 
     // Solve Inverse kinematics
     const auto start_time = std::chrono::high_resolution_clock::now();
@@ -97,11 +98,17 @@ void IKBenchmarking::gather_date()
       const auto solve_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
       solve_times_.push_back(solve_time.count());
 
-      data_file_ << i + 1 << ",yes," << solve_time.count() << "\n";
+      // Calculate position error 
+      Eigen::Isometry3d ik_tip_link_pose = robot_state_->getGlobalLinkTransform(tip_link_name_);
+      Eigen::Vector3d position_diff = ik_tip_link_pose.translation() - tip_link_pose.translation();
+      double position_error = position_diff.norm();
+      fmt::print("Position error is {}", position_error);
+
+      data_file_ << i + 1 << ",yes," << solve_time.count() << "," << position_error << "\n";
     }
     else
     {
-      data_file_ << i + 1 << ",no,not_available" << "\n";
+      data_file_ << i + 1 << ",no,not_available,not_available" << "\n";
     }
   }
 
