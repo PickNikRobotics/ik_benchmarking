@@ -35,8 +35,8 @@ void IKBenchmarking::initialize()
 
     if (bounded)
     {
-      fmt::print("Joint {} has bounds of {} and {}\n", i + 1,
-                 bounds.min_position_, bounds.max_position_);
+      // fmt::print("Joint {} has bounds of {} and {}\n", i + 1,
+      //            bounds.min_position_, bounds.max_position_);
       joint_bounds_.at(i).min_position = bounds.min_position_;
       joint_bounds_.at(i).max_position = bounds.max_position_;
     }
@@ -102,7 +102,6 @@ void IKBenchmarking::gather_date()
       Eigen::Isometry3d ik_tip_link_pose = robot_state_->getGlobalLinkTransform(tip_link_name_);
       Eigen::Vector3d position_diff = ik_tip_link_pose.translation() - tip_link_pose.translation();
       double position_error = position_diff.norm();
-      fmt::print("Position error is {}", position_error);
 
       // Calculate joints error (Ecludian distance)
       std::vector<double> ik_joint_values(joint_model_group_->getVariableCount());
