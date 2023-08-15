@@ -125,9 +125,6 @@ def generate_launch_description():
         ik_solver_key = 'ik_solver_'+ik_solver_value
         kinematics_file_key = 'ik_solver_'+ik_solver_value+'_kinematics_file'
 
-    print('_____________________ kinematics_file_key is _______________________',
-          kinematics_file_key)
-
     # Build moveit_config using the robot name and kinematic file
     moveit_config = (MoveItConfigsBuilder(robot_name)
                      .robot_description_kinematics(
@@ -157,8 +154,8 @@ def generate_launch_description():
         ],
     )
 
-    print('_____________________ IK SOLVER VALUE IS _______________________',
-          benchmarking_config[ik_solver_key])
+    print(
+        f'\n Running calculations for IK Solver: {benchmarking_config[ik_solver_key]} \n',)
 
     # Start benchmarking client node with the same parameters as the server, but with delay
     benchmarking_client_node = Node(
