@@ -117,10 +117,16 @@ def generate_launch_description():
     ik_solver_name = ''
     kinematics_file_name = ''
 
-    # TODO: Mohamed, handle cases when a requested solver is not provided in the ik_benchmarking.yaml config
-    if ik_solver_number > '0' and ik_solver_number in benchmarking_config['ik_solvers']:
-        ik_solver_name = benchmarking_config['ik_solvers'][ik_solver_number]['name']
-        kinematics_file_name = benchmarking_config['ik_solvers'][ik_solver_number]['kinematics_file']
+    if ik_solver_number > '0':
+        if ik_solver_number in benchmarking_config['ik_solvers']:
+            ik_solver_name = benchmarking_config['ik_solvers'][ik_solver_number]['name']
+            kinematics_file_name = benchmarking_config['ik_solvers'][ik_solver_number]['kinematics_file']
+        else:
+            print(
+                f"\n Error: The requested IK solver number {ik_solver_number} is not available in the ik_benchmarking configuration file.\n")
+            exit(1)
+    else:
+        print(f"\n Warning: IK solver numbers in ik_benchmarking configuration file starts from 1. Please enter a valid number.\n")
 
     # Build moveit_config using the robot name and kinematic file
     moveit_config = (MoveItConfigsBuilder(robot_name)
