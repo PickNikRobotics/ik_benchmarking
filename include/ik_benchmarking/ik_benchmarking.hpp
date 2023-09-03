@@ -32,7 +32,7 @@ public:
         calculation_done_(false)
   {
       data_file_.open("ik_benchmarking_data.csv", std::ios::app);
-      data_file_ << "trial,found_ik,solve_time,position_error,joints_error\n";
+      data_file_ << "trial,found_ik,solve_time,position_error,orientation_error,joints_error\n";
   }
 
   explicit IKBenchmarking(const std::string& node_name, const rclcpp::NodeOptions& options = rclcpp::NodeOptions())
@@ -44,7 +44,7 @@ public:
         calculation_done_(false)
   {   
       data_file_.open("ik_benchmarking_data"".csv", std::ios::app);
-      data_file_ << "trial,found_ik,solve_time,position_error,joints_error\n";
+      data_file_ << "trial,found_ik,solve_time,position_error,orientation_error,joints_error\n";
   }
   
   // Constructor used by the IKBenchmarkingServer to customize the output name
@@ -58,7 +58,7 @@ public:
   {   
       //Todo: Mohamed, customize data file name based on solver and output file path
       data_file_.open(std::string(solver)+"_ik_benchmarking_data.csv", std::ios::app);
-      data_file_ << "trial,found_ik,solve_time,position_error,joints_error\n";
+      data_file_ << "trial,found_ik,solve_time,position_error,orientation_error,joints_error\n";
   }
   
   void run();
