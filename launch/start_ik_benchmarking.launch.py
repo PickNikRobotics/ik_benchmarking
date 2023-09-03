@@ -56,31 +56,26 @@ def load_benchmarking_config(ik_benchmarking_pkg, ik_benchmarking_config):
     sample_size = get_config_data('sample_size')
 
     # Extract IK solvers details
-    # Assume three solvers are given (for simplicity)
+    ik_solvers_dict = {}
     ik_solvers_data = get_config_data('ik_solvers')
-    ik_solver_1_data = get_config_data('ik_solver_1', ik_solvers_data)
-    ik_solver_2_data = get_config_data('ik_solver_2', ik_solvers_data)
-    ik_solver_3_data = get_config_data('ik_solver_3', ik_solvers_data)
 
-    ik_solver_1 = ik_solver_1_data.get('name')
-    ik_solver_2 = ik_solver_2_data.get('name')
-    ik_solver_3 = ik_solver_3_data.get('name')
+    for ik_key, ik_value in ik_solvers_data.items():
+        ik_solver_name = ik_value.get('name')
+        ik_solver_kinematics_file = ik_value.get('kinematics_file')
 
-    ik_solver_1_kinematics_file = ik_solver_1_data.get('kinematics_file')
-    ik_solver_2_kinematics_file = ik_solver_2_data.get('kinematics_file')
-    ik_solver_3_kinematics_file = ik_solver_3_data.get('kinematics_file')
+        # Convert `ik_key` to a string to ensure compatibility with command-line
+        # arguments that specify the IK solver number when running the script
+        ik_solvers_dict[str(ik_key)] = {
+            'name': ik_solver_name,
+            'kinematics_file': ik_solver_kinematics_file
+        }
 
     # Return a dictionary to avoid errors due to return order
     return {
         'moveit_config_pkg': moveit_config_pkg,
         'move_group': move_group,
         'sample_size': sample_size,
-        'ik_solver_1': ik_solver_1,
-        'ik_solver_2': ik_solver_2,
-        'ik_solver_3': ik_solver_3,
-        'ik_solver_1_kinematics_file': ik_solver_1_kinematics_file,
-        'ik_solver_2_kinematics_file': ik_solver_2_kinematics_file,
-        'ik_solver_3_kinematics_file': ik_solver_3_kinematics_file
+        'ik_solvers': ik_solvers_dict
     }
 
 
@@ -109,7 +104,7 @@ def generate_launch_description():
 
     # Get parameter from launch argument
     # ik_solver_number_value = get_argument()
-    ik_solver_value = get_cmdline_argument("ik_solver_number")
+    ik_solver_number = get_cmdline_argument("ik_solver_number")
 
     ik_benchmarking_pkg = "ik_benchmarking"
     ik_benchmarking_config = "ik_benchmarking.yaml"
@@ -121,9 +116,11 @@ def generate_launch_description():
     # Check ik_solver value and decide kinematics_file to use
     kinematics_file_key = ''
     ik_solver_key = ''
-    if (ik_solver_value > '0'):
-        ik_solver_key = 'ik_solver_'+ik_solver_value
-        kinematics_file_key = 'ik_solver_'+ik_solver_value+'_kinematics_file'
+
+    # TODO: Mohamed, handle cases when a requested solver is not provided in the ik_benchmarking.yaml config
+    if ik_solver_number > '0' and ik_solver_number in benchmarking_config['ik_solvers']:
+        ik_solver_key = benchmarking_config['ik_solvers'][ik_solver_number]['name']
+        kinematics_file_key = benchmarking_config['ik_solvers'][ik_solver_number]['kinematics_file']
 
     # Build moveit_config using the robot name and kinematic file
     moveit_config = (MoveItConfigsBuilder(robot_name)
@@ -132,7 +129,7 @@ def generate_launch_description():
             get_package_share_directory(
                 benchmarking_config['moveit_config_pkg']),
             "config",
-            benchmarking_config[kinematics_file_key],
+            kinematics_file_key,
         )
     )
         .to_moveit_configs()
@@ -155,7 +152,7 @@ def generate_launch_description():
     )
 
     print(
-        f'\n Running calculations for IK Solver: {benchmarking_config[ik_solver_key]} \n',)
+        f'\n Running calculations for IK Solver: {ik_solver_key} \n',)
 
     # Start benchmarking client node with the same parameters as the server, but with delay
     benchmarking_client_node = Node(
@@ -169,7 +166,7 @@ def generate_launch_description():
             {
                 "move_group": benchmarking_config['move_group'],
                 "sample_size": benchmarking_config['sample_size'],
-                "ik_solver": benchmarking_config[ik_solver_key]
+                "ik_solver": ik_solver_key
             },
         ],
     )

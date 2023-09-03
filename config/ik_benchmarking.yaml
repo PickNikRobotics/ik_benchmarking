@@ -1,14 +1,14 @@
-moveit_config_pkg: iiwa_moveit_config
-move_group: iiwa_arm
+moveit_config_pkg: moveit_resources_panda_moveit_config
+move_group: panda_arm
 sample_size: 10000
 
 ik_solvers:
-  ik_solver_1:
+  1:
     name: KDL
     kinematics_file: kdl_kinematics.yaml
-  ik_solver_2:
+  2:
     name: TRAC_IK
     kinematics_file: trac_ik_kinematics.yaml
-  ik_solver_3:
+  3:
     name: pick_ik
     kinematics_file: pick_ik_kinematics.yaml
