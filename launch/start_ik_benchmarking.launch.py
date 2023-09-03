@@ -113,14 +113,14 @@ def generate_launch_description():
 
     robot_name = get_robot_name(benchmarking_config['moveit_config_pkg'])
 
-    # Check ik_solver value and decide kinematics_file to use
-    kinematics_file_key = ''
-    ik_solver_key = ''
+    # Check ik_solver_number and decide names of ik_solver and kinematics_file to use
+    ik_solver_name = ''
+    kinematics_file_name = ''
 
     # TODO: Mohamed, handle cases when a requested solver is not provided in the ik_benchmarking.yaml config
     if ik_solver_number > '0' and ik_solver_number in benchmarking_config['ik_solvers']:
-        ik_solver_key = benchmarking_config['ik_solvers'][ik_solver_number]['name']
-        kinematics_file_key = benchmarking_config['ik_solvers'][ik_solver_number]['kinematics_file']
+        ik_solver_name = benchmarking_config['ik_solvers'][ik_solver_number]['name']
+        kinematics_file_name = benchmarking_config['ik_solvers'][ik_solver_number]['kinematics_file']
 
     # Build moveit_config using the robot name and kinematic file
     moveit_config = (MoveItConfigsBuilder(robot_name)
@@ -129,7 +129,7 @@ def generate_launch_description():
             get_package_share_directory(
                 benchmarking_config['moveit_config_pkg']),
             "config",
-            kinematics_file_key,
+            kinematics_file_name,
         )
     )
         .to_moveit_configs()
@@ -152,7 +152,7 @@ def generate_launch_description():
     )
 
     print(
-        f'\n Running calculations for IK Solver: {ik_solver_key} \n',)
+        f'\n Running calculations for IK Solver: {ik_solver_name} \n',)
 
     # Start benchmarking client node with the same parameters as the server, but with delay
     benchmarking_client_node = Node(
@@ -166,7 +166,7 @@ def generate_launch_description():
             {
                 "move_group": benchmarking_config['move_group'],
                 "sample_size": benchmarking_config['sample_size'],
-                "ik_solver": ik_solver_key
+                "ik_solver": ik_solver_name
             },
         ],
     )
