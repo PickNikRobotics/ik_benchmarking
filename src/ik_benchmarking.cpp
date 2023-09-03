@@ -103,6 +103,11 @@ void IKBenchmarking::gather_date()
       Eigen::Vector3d position_diff = ik_tip_link_pose.translation() - tip_link_pose.translation();
       double position_error = position_diff.norm();
 
+      // Calculate orientation error (angle between two quaternions)
+      Eigen::Quaterniond orientation(tip_link_pose.rotation());
+      Eigen::Quaterniond ik_orientation(ik_tip_link_pose.rotation());
+      double orientation_error = orientation.angularDistance(ik_orientation);
+
       // Calculate joints error (Ecludian distance)
       std::vector<double> ik_joint_values(joint_model_group_->getVariableCount());
       robot_state_->copyJointGroupPositions(joint_model_group_, ik_joint_values);
@@ -113,11 +118,11 @@ void IKBenchmarking::gather_date()
       }
       joint_error = sqrt(joint_error); 
 
-      data_file_ << i + 1 << ",yes," << solve_time.count() << "," << position_error << "," << joint_error << "\n";
+      data_file_ << i + 1 << ",yes," << solve_time.count() << "," << position_error << "," << orientation_error << "," << joint_error << "\n";
     }
     else
     {
-      data_file_ << i + 1 << ",no,not_available,not_available,not_available" << "\n";
+      data_file_ << i + 1 << ",no,not_available,not_available,not_available,not_available" << "\n";
     }
   }
 
