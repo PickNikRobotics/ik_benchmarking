@@ -1,4 +1,4 @@
-# IK Solvers Benchmarking using ROS2 and MoveIt2
+# MoveIt Inverse Kinematics Benchmarking
 
 ## Introduction
 
