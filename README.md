@@ -1,6 +1,44 @@
-# IK Benchmarking with MoveIt 2
+# IK Solvers Benchmarking using ROS2 and MoveIt2
 
-This ROS 2 package provides utilities for Inverse Kinematics (IK) solvers benchmarking for performance evaluation and comparison.
+## Introduction
+
+Inverse Kinematics (IK) serves as a foundational element in robotic systems, facilitating purposeful interactions with the surrounding environment. It empowers robots to achieve specific poses and reach target locations with precision. Despite the importance of IK solvers in robotic planning and control, choosing the right one can be a complex decision. Different IK solvers offer unique strengths and weaknesses, raising the need to conduct a performance evaluation for specific use-cases.
+
+This `ik_benchmarking` package utilizes ROS 2 and MoveIt 2 to offer a suite of benchmarking utilities designed to aid the evaluation of IK solvers. This tutorial is crafted to walk you through the installing the package, configuring IK solvers for benchmarking, running the necessary scripts for data collection and visualization of the results for easier analysis. 
+
+In addition, the architectural components of the package are outlined with key classes that enable its functionality. Towards the end, we discuss potential future improvements, ensuring that the package remains aligned with emerging needs and technologies.
+
+
+## Installation 
+
+In the following steps, the `ik_benchmarking` is assumed to be installed in the `ws_moveit2` workspace as it is closely connect with MoveIt 2, but feel free to use your own workspace.
+
+
+1. **Clone the repository**
+    ```bash
+    cd ~/ws_moveit2/src
+    git clone https://github.com/Robotawi/ik_benchmarking.git
+    ```
+
+2. **Build the package as follows**
+    ```bash
+    cd ~/ws_moveit2
+    colcon build --packages-select ik_benchmarking --symlink-install
+    ```
+    If you made a fresh workspace, build the whole workspace
+    ```bash
+    colcon build --symlink-install
+    ```
+Note: Including the `--symlink-install` flag is advantageous as it allows you to make changes to the package files without requiring a complete rebuild of the workspace. This applies only to files that are interpreted at run time, like YAML, Python scripts, etc. 
+
+
+3. **Source the Workspace**
+    ```bash
+    source install/setup.bash
+    ```
+
+With these steps completed, we are now set to dive into the configuration of the IK solvers for benchmarking purposes.
+
 
 ## Contents
 
