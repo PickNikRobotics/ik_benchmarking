@@ -1,1 +1,1 @@
-# IK Benchmarking
+# MoveIt Inverse Kinematics Benchmarking
