@@ -213,6 +213,7 @@ Note: The command at the start of this section generates the files in the direct
 The setting of the desirable output directory is to be implemented soon.
 
 #### Visualization 
+![](figures/box_plot_solve_time.png)
 
 This point is expecting improvements for more convenience setting of the output directory 
 that hosts the generated CSV files. However, for the purpose of testing, please copy the script
