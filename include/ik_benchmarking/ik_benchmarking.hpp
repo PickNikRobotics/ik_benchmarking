@@ -35,7 +35,7 @@ public:
       data_file_ << "trial,found_ik,solve_time,position_error,orientation_error,joints_error\n";
   }
 
-  explicit IKBenchmarking(const std::string& node_name, const rclcpp::NodeOptions& options = rclcpp::NodeOptions())
+  IKBenchmarking(const std::string& node_name, const rclcpp::NodeOptions& options = rclcpp::NodeOptions())
       : node_(rclcpp::Node::make_shared(node_name, options)),
         logger_(node_->get_logger()),
         robot_model_loader_(node_),
@@ -48,7 +48,7 @@ public:
   }
   
   // Constructor used by the IKBenchmarkingServer to customize the output name
-  explicit IKBenchmarking(const std::string& node_name, const std::string& solver, const std::string output_file, const rclcpp::NodeOptions& options = rclcpp::NodeOptions())
+  IKBenchmarking(const std::string& node_name, const std::string& solver, const std::string output_file, const rclcpp::NodeOptions& options = rclcpp::NodeOptions())
       : node_(rclcpp::Node::make_shared(node_name, options)),
         logger_(node_->get_logger()),
         robot_model_loader_(node_),
