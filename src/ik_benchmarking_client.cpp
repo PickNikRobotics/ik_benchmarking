@@ -39,7 +39,7 @@ int main(int argc, char const *argv[])
     auto send_goal_options = rclcpp_action::Client<IKBenchmark>::SendGoalOptions();
 
 
-    // Setup a callback function to handle the result
+    // Set up a callback function to handle the result
     send_goal_options.result_callback = [&](const rclcpp_action::ClientGoalHandle<IKBenchmark>::WrappedResult & result) {
         if (result.result->calculation_done) {
             RCLCPP_INFO(node->get_logger(), "The IK Benchmarking action succeeded.");

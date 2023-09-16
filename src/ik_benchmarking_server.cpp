@@ -10,7 +10,7 @@ using IKBenchmark = ik_benchmarking::action::IKBenchmark;
 using GoalHandleIKBenchmark = rclcpp_action::ServerGoalHandle<IKBenchmark>;
 
 IKBenchmarkingServer::IKBenchmarkingServer(const rclcpp::NodeOptions& options):
-Node("ik_benchamrking_server", options)
+Node("ik_benchmarking_server", options)
 {
   using namespace std::placeholders; 
 

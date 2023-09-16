@@ -86,8 +86,8 @@ ik_solvers:
 
 - `moveit_config_pkg`: Specifies the MoveIt configuration package for the robot arm you are benchmarking. 
 For example, `moveit_resources_panda_moveit_config` is used for the Panda robot arm. 
-By convention, the MoveIt configuration packes are named `robot_moveit_config` or 
-`moveit_resources_robot_moveit_config`. Your robot's MoveIt config package should follow this conveniton. 
+By convention, the MoveIt configuration packages are named `robot_moveit_config` or 
+`moveit_resources_robot_moveit_config`. Your robot's MoveIt config package should follow this convention. 
 
 - `move_group`: Indicates the name of the move group that you wish to benchmark. In the example, the move group is `panda_arm`.
 
@@ -175,7 +175,7 @@ every process times out after 30 seconds, if it does not close cleanly.
 #### How to Run
 
 To execute the script, make sure you completed the installation step and sourced the workspace. 
-The package generates output files in the current working directry in which it is executed. 
+The package generates output files in the current working directory in which it is executed. 
 Run the following command to generate IK solving data for benchmarking process:
 
 ```bash
@@ -197,7 +197,7 @@ understand the performance and accuracy of the IK solver being evaluated.
 **Solve Rate:** is the percentage of the successful trials to the total IK solution trials. 
 
 **Position Error:** After finding the IK solution, the function calculates the position error by
-comparing the robot tip link position from both the forwad and inverse kinematics processes.
+comparing the robot tip link position from both the forward and inverse kinematics processes.
 
 **Orientation Error:** Similarly, an orientation error is calculated by determining the angle between
 robot tip link orientation from forward and inverse kinematics.
