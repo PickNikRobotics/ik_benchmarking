@@ -1,5 +1,4 @@
-#ifndef IK_BENCHMARKING_HPP
-#define IK_BENCHMARKING_HPP
+#pragma once
 
 #include <rclcpp/rclcpp.hpp>
 
@@ -95,5 +94,3 @@ private:
   void initialize();
   void gather_date();
 };
-
-#endif // IK_BENCHMARKING_HPP

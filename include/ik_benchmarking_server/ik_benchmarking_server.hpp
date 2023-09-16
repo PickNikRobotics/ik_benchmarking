@@ -1,5 +1,4 @@
-#ifndef IK_BENCHMARKING_SERVER_HPP
-#define IK_BENCHMARKING_SERVER_HPP
+#pragma once
 
 #include <memory>
 #include <rclcpp/rclcpp.hpp>
@@ -28,5 +27,3 @@ private:
 
   void execute(const std::shared_ptr<GoalHandleIKBenchmark> goal_handle, bool execute_once = false);
 };
-
-#endif //IK_BENCHMARKING_SERVER_HPP
