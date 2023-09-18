@@ -3,35 +3,11 @@ import sys
 import yaml
 from launch import LaunchDescription
 from launch.actions import TimerAction
-from launch.actions import DeclareLaunchArgument
+from launch.actions import DeclareLaunchArgument, OpaqueFunction
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 from moveit_configs_utils import MoveItConfigsBuilder
 from ament_index_python.packages import get_package_share_directory
-
-import launch
-from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, OpaqueFunction
-from launch.substitutions import LaunchConfiguration
-
-# Temporary solution
-
-
-def get_cmdline_argument(arg_name):
-    for arg in sys.argv:
-        if arg.startswith(arg_name + ":="):
-            return arg.split(":=")[1]
-    return '0'
-
-# Use Opaque function
-# Check: https://answers.ros.org/question/340705/access-launch-argument-in-launchfile-ros2/
-
-# def get_argument(context, *args, **kwargs):
-#     # Access the argument from context
-#     # arg_value = LaunchConfiguration('ik_solver_number').perform(context)
-#     arg_value = context.launch_configurations['my_arg']
-#     print(f"The value of 'my_arg' is: {arg_value}")
-
 
 def load_benchmarking_config(ik_benchmarking_pkg, ik_benchmarking_config):
     # Construct the configuration file path
@@ -56,26 +32,24 @@ def load_benchmarking_config(ik_benchmarking_pkg, ik_benchmarking_config):
     sample_size = get_config_data('sample_size')
 
     # Extract IK solvers details
-    ik_solvers_dict = {}
+    ik_solvers_list = []
     ik_solvers_data = get_config_data('ik_solvers')
 
-    for ik_key, ik_value in ik_solvers_data.items():
+    for ik_value in ik_solvers_data:
         ik_solver_name = ik_value.get('name')
         ik_solver_kinematics_file = ik_value.get('kinematics_file')
 
-        # Convert `ik_key` to a string to ensure compatibility with command-line
-        # arguments that specify the IK solver number when running the script
-        ik_solvers_dict[str(ik_key)] = {
+        ik_solvers_list.append({
             'name': ik_solver_name,
             'kinematics_file': ik_solver_kinematics_file
-        }
+        })
 
     # Return a dictionary to avoid errors due to return order
     return {
         'moveit_config_pkg': moveit_config_pkg,
         'move_group': move_group,
         'sample_size': sample_size,
-        'ik_solvers': ik_solvers_dict
+        'ik_solvers': ik_solvers_list
     }
 
 
@@ -96,16 +70,10 @@ def get_robot_name(moveit_config_pkg):
 
     return robot_name
 
-
-def generate_launch_description():
-    # Declar launch argument to decide which solver to use
-    ik_solver_arg = DeclareLaunchArgument(
-        "ik_solver_number", default_value="0", description="IK solver number corresponding to the ik_benchmarking.yaml config file. Use values of 1, 2, and 3.")
-
-    # Get parameter from launch argument
-    # ik_solver_number_value = get_argument()
-    ik_solver_number = get_cmdline_argument("ik_solver_number")
-
+# Utilize Opaque functions to retrieve the string values of launch arguments
+def prepare_benchmarking(context, *args, **kwargs):
+    
+    # Load the ik_benchmarking configuration data
     ik_benchmarking_pkg = "ik_benchmarking"
     ik_benchmarking_config = "ik_benchmarking.yaml"
     benchmarking_config = load_benchmarking_config(
@@ -113,22 +81,27 @@ def generate_launch_description():
 
     robot_name = get_robot_name(benchmarking_config['moveit_config_pkg'])
 
-    # Check ik_solver_number and decide names of ik_solver and kinematics_file to use
-    ik_solver_name = ''
+    # Get the actual values of ik_solver and kinematics file
+    ik_solver_name = LaunchConfiguration('ik_solver_name').perform(context)
     kinematics_file_name = ''
 
-    if ik_solver_number > '0':
-        if ik_solver_number in benchmarking_config['ik_solvers']:
-            ik_solver_name = benchmarking_config['ik_solvers'][ik_solver_number]['name']
-            kinematics_file_name = benchmarking_config['ik_solvers'][ik_solver_number]['kinematics_file']
-        else:
+    if ik_solver_name != '':
+        found = False
+        for _, ik_solver in enumerate(benchmarking_config['ik_solvers']):
+            if ik_solver['name'] == ik_solver_name:
+                found = True
+                kinematics_file_name = ik_solver['kinematics_file']
+                break
+        
+        if not found:
             print(
-                f"\n Error: The requested IK solver number {ik_solver_number} is not available in the ik_benchmarking configuration file.\n")
+                f"\n Error: The requested IK solver name {ik_solver_name} is not available in the ik_benchmarking configuration file.\n")
             exit(1)
     else:
-        print(f"\n Warning: IK solver numbers in ik_benchmarking configuration file starts from 1. Please enter a valid number.\n")
+        print(f"\n Error: The 'ik_solver_name' argument should be provided when starting the 'start_ik_benchmarking.launch.py' file.\n")
+        exit(1)
 
-    # Build moveit_config using the robot name and kinematic file
+        # Build moveit_config using the robot name and kinematic file
     moveit_config = (MoveItConfigsBuilder(robot_name)
                      .robot_description_kinematics(
         file_path=os.path.join(
@@ -180,5 +153,15 @@ def generate_launch_description():
     # Delay the client node launch for two seconds till the server is fully started
     delayed_benchmarking_client_node = TimerAction(
         period=2.0, actions=[benchmarking_client_node])
+    
+    return [benchmarking_server_node, delayed_benchmarking_client_node]
 
-    return LaunchDescription([benchmarking_server_node, delayed_benchmarking_client_node, ik_solver_arg])
+def generate_launch_description():
+    # Declare a launch argument to decide the IK solver and kinematic file to use
+    declare_ik_solver_name_arg = DeclareLaunchArgument(
+        'ik_solver_name',
+        default_value='',
+        description="IK solver name corresponding to the name value in ik_benchmarking.yaml config file."
+    )
+
+    return LaunchDescription([declare_ik_solver_name_arg, OpaqueFunction(function=prepare_benchmarking)])
