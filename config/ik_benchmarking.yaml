@@ -1,14 +1,14 @@
 moveit_config_pkg: moveit_resources_panda_moveit_config
-move_group: panda_arm
+# add robot_name 
+move_group: panda_arm #rename to planning_group
 sample_size: 10000
 
 ik_solvers:
-  1:
-    name: KDL
+  - name: KDL
     kinematics_file: kdl_kinematics.yaml
-  2:
-    name: TRAC_IK
+    
+  - name: TRAC_IK
     kinematics_file: trac_ik_kinematics.yaml
-  3:
-    name: pick_ik
+  
+  - name: pick_ik
     kinematics_file: pick_ik_kinematics.yaml
