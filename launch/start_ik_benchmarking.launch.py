@@ -28,7 +28,7 @@ def load_benchmarking_config(ik_benchmarking_pkg, ik_benchmarking_config):
         return value
 
     moveit_config_pkg = get_config_data('moveit_config_pkg')
-    move_group = get_config_data('move_group')
+    planning_group = get_config_data('planning_group')
     sample_size = get_config_data('sample_size')
 
     # Extract IK solvers details
@@ -47,7 +47,7 @@ def load_benchmarking_config(ik_benchmarking_pkg, ik_benchmarking_config):
     # Return a dictionary to avoid errors due to return order
     return {
         'moveit_config_pkg': moveit_config_pkg,
-        'move_group': move_group,
+        'planning_group': planning_group,
         'sample_size': sample_size,
         'ik_solvers': ik_solvers_list
     }
@@ -114,7 +114,7 @@ def prepare_benchmarking(context, *args, **kwargs):
         .to_moveit_configs()
     )
 
-    # Start benchmarking server node with required robot description and move_group parameters
+    # Start benchmarking server node with required robot description and planning_group parameters
     benchmarking_server_node = Node(
         package="ik_benchmarking",
         executable="ik_benchmarking_server",
@@ -124,7 +124,7 @@ def prepare_benchmarking(context, *args, **kwargs):
             moveit_config.robot_description_semantic,
             moveit_config.robot_description_kinematics,
             {
-                "move_group": benchmarking_config['move_group'],
+                "planning_group": benchmarking_config['planning_group'],
                 "sample_size": benchmarking_config['sample_size']
             },
         ],
@@ -143,7 +143,7 @@ def prepare_benchmarking(context, *args, **kwargs):
             moveit_config.robot_description_semantic,
             moveit_config.robot_description_kinematics,
             {
-                "move_group": benchmarking_config['move_group'],
+                "planning_group": benchmarking_config['planning_group'],
                 "sample_size": benchmarking_config['sample_size'],
                 "ik_solver": ik_solver_name
             },

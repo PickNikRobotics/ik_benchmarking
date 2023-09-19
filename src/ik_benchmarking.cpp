@@ -19,8 +19,8 @@ void IKBenchmarking::initialize()
 
   robot_state_->setToDefaultValues();
 
-  move_group_name_ = node_->get_parameter("move_group").as_string();
-  joint_model_group_ = robot_model_->getJointModelGroup(move_group_name_);
+  planning_group_name_ = node_->get_parameter("planning_group").as_string();
+  joint_model_group_ = robot_model_->getJointModelGroup(planning_group_name_);
 
   joint_names_ = joint_model_group_->getVariableNames();
   joint_bounds_.resize(joint_model_group_->getVariableCount());

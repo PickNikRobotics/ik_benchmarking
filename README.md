@@ -61,13 +61,13 @@ IK solvers for benchmarking purposes.
 ### Configuration via `ik_benchmarking.yaml`
 
 Before running any benchmarking, it is crucial to set up the `ik_benchmarking.yaml` configuration file according to your needs. 
-This file allows you to specify various settings like the MoveIt configuration package to load the robot model from, move group of the robot that is pre-defined inside 
+This file allows you to specify various settings like the MoveIt configuration package to load the robot model from, planning group of the robot that is pre-defined inside 
 the MoveIt configuration package, sample size, and the IK solvers you wish to test. 
 Below is an explanation of each key-value pair in the configuration file:
 
 ```yaml
 moveit_config_pkg: moveit_resources_panda_moveit_config
-move_group: panda_arm
+planning_group: panda_arm
 sample_size: 10000
 
 ik_solvers:
@@ -89,7 +89,7 @@ For example, `moveit_resources_panda_moveit_config` is used for the Panda robot 
 By convention, the MoveIt configuration packages are named `robot_moveit_config` or 
 `moveit_resources_robot_moveit_config`. Your robot's MoveIt config package should follow this convention. 
 
-- `move_group`: Indicates the name of the move group that you wish to benchmark. In the example, the move group is `panda_arm`.
+- `planning_group`: Indicates the name of the planning group that you wish to use for benchmarking IK solvers. In the example, the planning group is `panda_arm`.
 
 - `sample_size`: Specifies the number of samples the benchmarking will run. 
 For instance, setting it to `10000` means that each IK solver will be tested 10,000 times.

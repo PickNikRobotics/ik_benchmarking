@@ -136,7 +136,7 @@ private:
   moveit::core::RobotModelPtr robot_model_; ///< Shared pointer to the robot model to be loaded using the robot_model_loader_.
   moveit::core::RobotStatePtr robot_state_; ///< Shared pointer to the robot state which carries information about joint values.
 
-  std::string move_group_name_; ///< The name of the move group (planning group) for which to compute IK.
+  std::string planning_group_name_; ///< The name of the planning group (move_group) for which to compute IK.
   const moveit::core::JointModelGroup *joint_model_group_; ///< Pointer to the joint model group used to get information about the group and solve IK.
 
   std::string tip_link_name_; ///< The name of the tip link in the planning group used to solve IK.
