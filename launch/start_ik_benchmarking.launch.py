@@ -28,6 +28,7 @@ def load_benchmarking_config(ik_benchmarking_pkg, ik_benchmarking_config):
         return value
 
     moveit_config_pkg = get_config_data('moveit_config_pkg')
+    robot_name = get_config_data('robot_name')
     planning_group = get_config_data('planning_group')
     sample_size = get_config_data('sample_size')
 
@@ -47,28 +48,11 @@ def load_benchmarking_config(ik_benchmarking_pkg, ik_benchmarking_config):
     # Return a dictionary to avoid errors due to return order
     return {
         'moveit_config_pkg': moveit_config_pkg,
+        'robot_name': robot_name,
         'planning_group': planning_group,
         'sample_size': sample_size,
         'ik_solvers': ik_solvers_list
     }
-
-
-def get_robot_name(moveit_config_pkg):
-    parts = moveit_config_pkg.split("_")
-
-    if len(parts) < 2:
-        print(
-            "Error: The package name {moveit_config_pkg} is not standard. Please use 'robot_moveit_config' or 'moveit_resources_robot_moveit_config'.")
-        exit(1)
-
-    package_name_prefix = '_'.join(parts[:2])
-
-    if package_name_prefix == "moveit_resources":
-        robot_name = '_'.join(parts[:3])
-    else:
-        robot_name = parts[0]
-
-    return robot_name
 
 # Utilize Opaque functions to retrieve the string values of launch arguments
 def prepare_benchmarking(context, *args, **kwargs):
@@ -78,8 +62,6 @@ def prepare_benchmarking(context, *args, **kwargs):
     ik_benchmarking_config = "ik_benchmarking.yaml"
     benchmarking_config = load_benchmarking_config(
         ik_benchmarking_pkg, ik_benchmarking_config)
-
-    robot_name = get_robot_name(benchmarking_config['moveit_config_pkg'])
 
     # Get the actual values of ik_solver and kinematics file
     ik_solver_name = LaunchConfiguration('ik_solver_name').perform(context)
@@ -101,7 +83,9 @@ def prepare_benchmarking(context, *args, **kwargs):
         print(f"\n Error: The 'ik_solver_name' argument should be provided when starting the 'start_ik_benchmarking.launch.py' file.\n")
         exit(1)
 
-        # Build moveit_config using the robot name and kinematic file
+    # Build moveit_config using the robot name and kinematic file
+    robot_name = benchmarking_config['robot_name']
+
     moveit_config = (MoveItConfigsBuilder(robot_name)
                      .robot_description_kinematics(
         file_path=os.path.join(

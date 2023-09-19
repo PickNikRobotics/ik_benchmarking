@@ -1,4 +1,5 @@
 moveit_config_pkg: moveit_resources_panda_moveit_config
+robot_name: panda 
 planning_group: panda_arm
 sample_size: 10000
 
