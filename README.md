@@ -122,55 +122,25 @@ This Python script serves as a convenient way to automate the process of launchi
 
 #### Script Overview
 
-Below is the content of the `ik_benchmarking_data_generator.py` script:
-
-```python
-#!/usr/bin/env python3
-
-import subprocess
-
-def main():
-    # Assume the ik_benchmarking package is inside ws_moveit2 workspace
-    source_command = "source /home/$USER/ws_moveit2/install/setup.bash"
-
-    # Commands to run ik benchmarking with different IK solvers
-    launch_commands = [
-        "ros2 launch ik_benchmarking start_ik_benchmarking.launch.py ik_solver_number:=1",
-        "ros2 launch ik_benchmarking start_ik_benchmarking.launch.py ik_solver_number:=2",
-        "ros2 launch ik_benchmarking start_ik_benchmarking.launch.py ik_solver_number:=3"
-    ]
-
-    for command in launch_commands:
-        full_command = f"{source_command} && {command}"
-        process = subprocess.Popen(
-            full_command, shell=True, executable="/bin/bash")
-
-        # Wait for completion or timeout after 30 seconds to run next command
-        try:
-            process.communicate(timeout=30)
-        except subprocess.TimeoutExpired:
-            process.kill()
-
-if __name__ == "__main__":
-    main()
-```
+Here is a link to the [ik_benchmarking_data_generator.py](./scripts/ik_benchmarking_data_generator.py) script. 
+The script is designed to dynamically read the `ik_benchmarking.yaml` configuration file, 
+and construct the launch commands for the different IK solvers.
 
 #### Key Components
 
-- `source_command`: This command sources the workspace where the `ik_benchmarking` package is located.
-The script assumes that this workspace is `ws_moveit2`. 
-Adapt this to the name of your workspace if it is different.
+- `load_benchmarking_config()` function reads the `ik_benchmarking.yaml` configuration file for 
+the `ik_benchmarking` package. It retrieves the names of all the IK solvers specified in the 
+configuration file and returns them as a list of strings.
 
-- `launch_commands`: A list of ROS 2 launch commands that start the benchmarking process for each
- IK solver, defined by the argument `ik_solver_number`. 
- This `ik_solver number` corresponds to the identifiers mentioned above in the `ik_benchmarking.yaml` file. 
- For example, the three lines in the script generate data for the three solvers with identifiers `1`, `2`, and `3`.
+- `ik_solver_names` is a list contains the names of the IK solvers as specified in the configuration file.
 
-- The `subprocess` module is used to execute each command, 
+- `launch_commands` is a dynamically generated list of ROS 2 launch commands, tailored based on the 
+names of the available IK solvers in the `ik_solver_names`. Each command in this list 
+includes a solver name as an argument. This argument directs the benchmarking process to utilize 
+a specific IK solver for generating performance data.
+
+- `subprocess` module is used to execute each entry in the `launch_commands`, 
 launching the benchmarking process for the respective IK solvers.
-
-- To avoid a faulty process from blocking the benchmarking process, 
-every process times out after 30 seconds, if it does not close cleanly.
 
 #### How to Run
 
