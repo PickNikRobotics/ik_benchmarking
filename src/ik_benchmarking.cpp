@@ -35,15 +35,15 @@ void IKBenchmarking::initialize()
 
     if (bounded)
     {
-      // fmt::print("Joint {} has bounds of {} and {}\n", i + 1,
-      //            bounds.min_position_, bounds.max_position_);
+      RCLCPP_DEBUG(logger_, "Joint %ld has bounds of %f and %f\n", i + 1, 
+      bounds.min_position_, bounds.max_position_);
+
       joint_bounds_.at(i).min_position = bounds.min_position_;
       joint_bounds_.at(i).max_position = bounds.max_position_;
     }
     else
     {
-      fmt::print("Joints are unbounded!\n");
-      // TODO (Mohamed): Handle this case. Should we assume a range?
+      RCLCPP_WARN(logger_, "Joint %ld is unbounded.");
     }
   }
 
@@ -76,7 +76,20 @@ void IKBenchmarking::gather_date()
                                                     bound.max_position);
       random_joint_values.push_back(distribution(generator_));
     }
-    // fmt::print("Random joint values are:\n{}\n", random_joint_values);
+
+    //  Log the sampled random joint values for debugging
+    std::stringstream ss; 
+    ss << "[";
+    for (size_t i = 0; i < random_joint_values.size(); ++i)
+    {
+      ss << random_joint_values[i];
+      if (i != random_joint_values.size() -1)
+      {
+        ss << ", ";
+      }
+    }
+    ss << "]";
+    RCLCPP_DEBUG(logger_, "The sampled random joint values are:\n%s\n", ss.str().c_str());
 
     // Solve Forward Kinematics
     robot_state_->setJointGroupPositions(joint_model_group_, random_joint_values);
@@ -84,6 +97,9 @@ void IKBenchmarking::gather_date()
 
     const Eigen::Isometry3d &tip_link_pose = robot_state_->getGlobalLinkTransform(tip_link_name_);
 
+    robot_state_->setToRandomPositions(joint_model_group_);
+    robot_state_->updateLinkTransforms(); 
+    
     // Solve Inverse kinematics
     const auto start_time = std::chrono::high_resolution_clock::now();
 
@@ -130,7 +146,7 @@ void IKBenchmarking::gather_date()
   average_solve_time_ = std::accumulate(solve_times_.begin(), solve_times_.end(), 0.0) / solve_times_.size();
   success_rate_ = success_count_ / sample_size_;
 
-  fmt::print("Success rate = {} and average IK solving time is {} ms\n", success_rate_ , average_solve_time_);
+  RCLCPP_INFO(logger_, "Success rate = %f and average IK solving time is %f ms\n", success_rate_ , average_solve_time_);
 
   calculation_done_ = true;
 }
