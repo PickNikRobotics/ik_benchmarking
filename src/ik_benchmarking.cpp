@@ -43,7 +43,10 @@ void IKBenchmarking::initialize()
     }
     else
     {
-      RCLCPP_WARN(logger_, "Joint %ld is unbounded.");
+      RCLCPP_WARN(logger_, "Joint %ld is unbounded. Setting a range from -PI to PI\n", i+1);
+
+      joint_bounds_.at(i).min_position = -M_PI;
+      joint_bounds_.at(i).max_position = M_PI;
     }
   }
 
