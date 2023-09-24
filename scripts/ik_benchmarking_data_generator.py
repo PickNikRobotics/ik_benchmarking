@@ -29,9 +29,6 @@ def load_benchmarking_config(ik_benchmarking_pkg, ik_benchmarking_config):
 
 
 def main():
-    # Assume the ik_benchmarking package is inside ws_moveit2 and source the workspace
-    source_command = "source /home/$USER/ws_moveit2/install/setup.bash"
-
     # Load IK solvers data from ik_benchmarking.yaml file
     ik_benchmarking_pkg = "ik_benchmarking"
     ik_benchmarking_config = "ik_benchmarking.yaml"
@@ -44,9 +41,7 @@ def main():
     ]
 
     for command in launch_commands:
-        full_command = f"{source_command} && {command}"
-        process = subprocess.Popen(
-            full_command, shell=True, executable="/bin/bash")
+        process = subprocess.Popen(command, shell=True, executable="/bin/bash")
 
         # Wait for completion or timeout after 30 seconds to run next command
         try:
