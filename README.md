@@ -24,19 +24,20 @@ key classes that enable its functionality. Towards the end, we discuss potential
 
 In the following steps, the `ik_benchmarking` is assumed to be installed in 
 the `ws_moveit2` workspace as it is closely connect with MoveIt 2, 
-but feel free to use your own workspace.
+but feel free to use your own workspace. The default example of `ik_benchmarking` uses `KDL`, `pick_ik`, and `TRAC_IK` solvers. 
 
 
-1. **Clone the repository**
+1. **Clone the repository and its dependencies**
     ```bash
     cd ~/ws_moveit2/src
     git clone https://github.com/Robotawi/ik_benchmarking.git
+    vcs import ik_benchmarking/.repos
     ```
 
-2. **Build the package as follows**
+2. **Build the ik_benchmarking and IK solvers packages as follows**
     ```bash
     cd ~/ws_moveit2
-    colcon build --packages-select ik_benchmarking --symlink-install
+    colcon build --packages-select ik_benchmarking pick_ik trac_ik --symlink-install
     ```
     If you made a fresh workspace, build the whole workspace
     ```bash
