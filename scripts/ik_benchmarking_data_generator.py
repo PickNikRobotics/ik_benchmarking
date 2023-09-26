@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import glob
 import yaml
 from ament_index_python.packages import get_package_share_directory
 
@@ -29,6 +30,13 @@ def load_benchmarking_config(ik_benchmarking_pkg, ik_benchmarking_config):
 
 
 def main():
+    # Print the path where the resulting files will be saved 
+    directory_path = os.getcwd()
+
+    print(f"\n{'=' * 60}")
+    print(f"\nThe benchmarking CSV files will be saved in the directory:\n\n{directory_path}")
+    print(f"\n{'=' * 60}")
+
     # Load IK solvers data from ik_benchmarking.yaml file
     ik_benchmarking_pkg = "ik_benchmarking"
     ik_benchmarking_config = "ik_benchmarking.yaml"
