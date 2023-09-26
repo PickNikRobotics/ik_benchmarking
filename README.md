@@ -203,3 +203,25 @@ python3 ik_benchmarking_data_visualizer.py
 The script loads files that end with the suffix `_ik_benchmarking_data.csv` and plots the data from them. 
 Solve times are visualized with box plots, solve rates with bar charts, 
 and the different types of errors are illustrated with scatter plots. 
+
+### Using Cyclone DDS
+
+
+**Note:** To ensure smooth operation of the IK Benchmarking, configure ROS 2 to use Cyclone DDS
+as the default DDS middleware. If it's not already configured, follow these steps:
+
+- Install Cyclone DDS for your ROS 2 distribution. 
+
+```bash
+sudo apt install ros-${ROS_DISTRO}-cyclonedds
+```
+
+- Set up the necessary environment variables
+
+```bash
+echo "export RMW_IMPLEMENTATION=cyclonedds" >> ~/.bashrc
+```
+
+- Start new terminal session. 
+
+
