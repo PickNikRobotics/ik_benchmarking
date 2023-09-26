@@ -94,16 +94,17 @@ void IKBenchmarking::gather_date()
     ss << "]";
     RCLCPP_DEBUG(logger_, "The sampled random joint values are:\n%s\n", ss.str().c_str());
 
-    // Solve Forward Kinematics
+    // Solve Forward Kinematics (FK)
     robot_state_->setJointGroupPositions(joint_model_group_, random_joint_values);
     robot_state_->updateLinkTransforms();
 
-    const Eigen::Isometry3d &tip_link_pose = robot_state_->getGlobalLinkTransform(tip_link_name_);
+    // After solving FK and before solving IK, save a copy of the tip_link_pose to calculate pose errors
+    const Eigen::Isometry3d tip_link_pose = robot_state_->getGlobalLinkTransform(tip_link_name_);
 
     robot_state_->setToRandomPositions(joint_model_group_);
     robot_state_->updateLinkTransforms(); 
     
-    // Solve Inverse kinematics
+    // Solve Inverse kinematics (IK)
     const auto start_time = std::chrono::high_resolution_clock::now();
 
     bool found_ik =
