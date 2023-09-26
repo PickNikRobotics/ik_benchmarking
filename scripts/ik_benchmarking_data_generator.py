@@ -42,6 +42,35 @@ def main():
     ik_benchmarking_config = "ik_benchmarking.yaml"
     ik_solver_names = load_benchmarking_config(ik_benchmarking_pkg, ik_benchmarking_config)
 
+    # Check if previous resulting CSV files already exist in the current directory
+    current_csv_filenames = glob.glob("*.csv")
+    result_csv_filenames = [ik_solver_name + "_ik_benchmarking_data.csv" for ik_solver_name in ik_solver_names]
+    conflict_csv_filenames = []
+
+    if current_csv_filenames:
+        for filename in current_csv_filenames:
+            if filename in result_csv_filenames:
+                conflict_csv_filenames.append(filename)
+    
+    if conflict_csv_filenames:
+        print("Warning: The current directory contains IK benchmarking files from previous runs: ")
+        print(", ".join(conflict_csv_filenames)) 
+        user_input = input("\nDo you want to permantently delete them and continue the benchmarking? (y/n): ")
+
+        if user_input.lower() == 'y':
+            for filename in conflict_csv_filenames:
+                os.remove(filename)
+            
+            print("Conflicting CSV files deleted. Continuing with benchmarking...\n")
+
+        elif user_input.lower() == 'n':
+            print("Benchmarking aborted.")
+            exit(0)
+        
+        else:
+            print("Invalid input. Benchmarking aborted.")
+            exit(1)
+
     # Commands to run ik benchmarking with different IK solvers
     launch_commands = [
         f"ros2 launch ik_benchmarking start_ik_benchmarking.launch.py ik_solver_name:={ik_solver_name}"
