@@ -128,7 +128,7 @@ void IKBenchmarking::gather_date()
       Eigen::Quaterniond ik_orientation(ik_tip_link_pose.rotation());
       double orientation_error = orientation.angularDistance(ik_orientation);
 
-      // Calculate joints error (Ecludian distance)
+      // Calculate joint error (Eucludian distance)
       std::vector<double> ik_joint_values(joint_model_group_->getVariableCount());
       robot_state_->copyJointGroupPositions(joint_model_group_, ik_joint_values);
       double joint_error{0.0};
