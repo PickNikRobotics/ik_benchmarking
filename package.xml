@@ -28,6 +28,12 @@
 
   <member_of_group>rosidl_interface_packages</member_of_group>
 
+  <!-- Dependencies for the default IK benchmarking example -->
+  <depend>pick_ik</depend>
+  <depend>trac_ik</depend>
+  <depend>moveit_resources_panda_moveit_config</depend>
+  <!-- End of default example dependencies -->
+
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 
