@@ -13,9 +13,9 @@ def read_ik_benchmarking_files():
     for file in files:
         data = pd.read_csv(file)
 
-        # Convert to numeric and drop non-numeric rows
-        data['solve_time'] = pd.to_numeric(data['solve_time'], errors='coerce')
-        data.dropna(subset=['solve_time'], inplace=True)
+        # Convert solve_time and errors to numeric
+        for col in ['solve_time', 'position_error', 'orientation_error','joints_error']:
+            data[col] = pd.to_numeric(data[col], errors='coerce')
 
         data['found_ik'] = data['found_ik'] == 'yes'
 
@@ -36,7 +36,7 @@ def plot_data(data_list):
 
     for file, data in data_list:
         success_data = data[data['found_ik']]
-        all_data.extend(success_data['solve_time'])
+        all_data.extend(success_data.dropna(subset=['solve_time'])['solve_time'])
         labels.extend([file] * len(success_data))
 
     df_to_plot = pd.DataFrame({
@@ -64,22 +64,24 @@ def plot_data(data_list):
     plt.xlabel('IK Solvers')
     plt.show()
 
-    # Scatter plots for position_error, orientation_error, and joints_error
+    # Box plots for position_error, orientation_error, and joints_error
     error_types = ['position_error', 'orientation_error', 'joints_error']
 
     for error_type in error_types:
         plt.figure(figsize=(15, 10))
+        all_error_data = []
+        error_labels = []
 
         for file, data in data_list:
             success_data = data[data['found_ik']]
-            plt.scatter([file] * len(success_data),
-                        success_data[error_type], label=file)
+            all_error_data.extend(success_data.dropna(subset=[error_type])[error_type])
+            error_labels.extend([file] * len(success_data))
 
-        plt.title(
-            f'{error_type.replace("_", " ").title()} for Successful Trials')
+        df_error_to_plot = pd.DataFrame({error_type: all_error_data, 'Dataset': error_labels})
+        sns.boxplot(x='Dataset', y=error_type, data=df_error_to_plot, showfliers=False)
+        plt.title(f'{error_type.replace("_", " ").title()} for Successful Trials')
         plt.ylabel(error_type.replace("_", " ").title())
         plt.xlabel('IK Solvers')
-        plt.legend()
         plt.show()
 
 
