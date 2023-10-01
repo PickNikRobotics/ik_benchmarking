@@ -61,25 +61,28 @@ IK solvers for benchmarking purposes.
 
 ### Configuration via `ik_benchmarking.yaml`
 
-Before running any benchmarking, it is crucial to set up the `ik_benchmarking.yaml` configuration file according to your needs. 
-This file allows you to specify various settings like the MoveIt configuration package to load the robot model from, planning group of the robot that is pre-defined inside 
-the MoveIt configuration package, sample size, and the IK solvers you wish to test. 
-Below is an explanation of each key-value pair in the configuration file:
+Before initiating the benchmarking process, ensure that the `ik_benchmarking.yaml` 
+configuration file is tailored according to your needs. This file allows users to 
+define various settings such as the MoveIt configuration package to load the robot model, 
+the planning group for the robot pre-defined within the MoveIt configuration package, 
+the sample size, and the IK solvers intended for testing. 
+
+Below is a breakdown of the default example configuration file's structure:
 
 ```yaml
 moveit_config_pkg: moveit_resources_panda_moveit_config
+robot_name: panda
 planning_group: panda_arm
 sample_size: 10000
 
 ik_solvers:
-  1:
-    name: KDL
+  - name: KDL
     kinematics_file: kdl_kinematics.yaml
-  2:
-    name: TRAC_IK
+
+  - name: TRAC_IK
     kinematics_file: trac_ik_kinematics.yaml
-  3:
-    name: pick_ik
+  
+  - name: pick_ik
     kinematics_file: pick_ik_kinematics.yaml
 ```
 
@@ -90,6 +93,8 @@ For example, `moveit_resources_panda_moveit_config` is used for the Panda robot 
 By convention, the MoveIt configuration packages are named `robot_moveit_config` or 
 `moveit_resources_robot_moveit_config`. Your robot's MoveIt config package should follow this convention. 
 
+- `robot_name`: The name of the robot model to be used in the benchmarking process.
+
 - `planning_group`: Indicates the name of the planning group that you wish to use for benchmarking IK solvers. In the example, the planning group is `panda_arm`.
 
 - `sample_size`: Specifies the number of samples the benchmarking will run. 
@@ -97,20 +102,15 @@ For instance, setting it to `10000` means that each IK solver will be tested 10,
 
 #### IK Solvers
 
-The `ik_solvers` section is an indexed list of solvers to benchmark:
+The `ik_solvers` section presents the list of solvers to be benchmarked:
 
-- The numeric keys (e.g., `1`, `2`, `3`) are used to identify the IK solvers. 
-The actual numerical value has no specific significance but should be unique for each solver. 
-The numbering starts from `1` and there is no limit on the number of solvers to be used to 
-collect IK solving data in a single benchmarking run. 
-Make sure each solver has a key in the list and the following `name` and `kinematics_file`.
+- `name`: Represents the name of the IK solver you wish to benchmark, 
+such as `KDL`, `TRAC_IK`, `pick_ik`, or other solvers.
+- `kinematics_file`: Specifies the YAML file containing the solver's kinematic configuration. 
+This file is conventionally located within the `config` directory of the robot's MoveIt configuration package.
 
-- `name`: The name of the IK solver you are benchmarking, such as `KDL`, `TRAC_IK`, or `pick_ik`.
-
-- `kinematics_file`: The YAML file that holds the solver's kinematic configuration. 
-This YAML file, by convention, exists in the `config` directory of the robot's MoveIt configuration package.
-
-By configuring the `ik_benchmarking.yaml` file appropriately, you can control which IK solvers to benchmark, allowing for a comprehensive evaluation.
+Appropriately configuring the `ik_benchmarking.yaml` enables users to select specific IK solvers 
+for a comprehensive benchmarking experience.
 
 ### Running the benchmarking 
 
