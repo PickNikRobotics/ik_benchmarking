@@ -184,26 +184,72 @@ while the `solver_name` is loaded from the `ik_benchmarking.yaml` config file.
 Note: The command at the start of this section generates the files in the directory `~/ws_moveit2`.
 The setting of the desirable output directory is to be implemented soon.
 
-#### Visualization 
-![](figures/box_plot_solve_time.png)
+### Visualizing the Benchmarking Data
 
-This point is expecting improvements for more convenience setting of the output directory 
-that hosts the generated CSV files. However, for the purpose of testing, please copy the script
-responsible for plotting the generated data from inside the `ik_benchmarking` package and run it as follows.
+#### The `ik_benchmarking_data_visualizer.py` script
+
+Once you have generated the benchmarking data using the `ik_benchmarking_data_generator.py` script, 
+you can utilize the `ik_benchmarking_data_visualizer.py` script for visualization. 
+This script, is also a node within the `ik_benchmarking` package, facilitates the visualization of IK solver performance, 
+offering insights into their strengths and weaknesses.
+
+#### Script Overview
+
+Access the [ik_benchmarking_data_visualizer.py](./scripts/ik_benchmarking_data_visualizer.py) script here. 
+The script reads the previously generated CSV files, processes the data, and visualizes key performance metrics using plots.
+
+#### Key Components
+
+- `read_ik_benchmarking_files()`: This function is responsible for reading the benchmarking data from CSV files. 
+It processes the data and prepares it for visualization.
+
+- `plot_data()`: This function is responsible for plotting the data. It creates box plots for solve times, 
+position, orientation, and joint errors, as well as bar charts for success rates. 
+
+#### How to Run
+
+To visualize the benchmarking data, ensure your workspace is sourced and use the `ik_benchmarking_data_visualizer.py` script.
+By default, the script looks for data files in the current working directory. Run it as follows:
 
 ```bash
-# Copy the script to the workspace
-cd ~/ws_moveit2
-cp src/ik_benchmarking/scripts/ik_benchmarking_data_visualizer.py .
-
-# Run the script on the generated data 
-python3 ik_benchmarking_data_visualizer.py 
-
+ros2 run ik_benchmarking ik_benchmarking_data_visualizer.py
 ```
 
-The script loads files that end with the suffix `_ik_benchmarking_data.csv` and plots the data from them. 
-Solve times are visualized with box plots, solve rates with bar charts, 
-and the different types of errors are illustrated with scatter plots. 
+However, if your data files reside in a different directory, specify the path using:
+
+```bash
+ros2 run ik_benchmarking ik_benchmarking_data_visualizer.py --ros-args -p data_directory:=<path to the directory containing data files>
+```
+
+This script reads the benchmarking data and displays a series of plots, providing an insight of the performance of the specified IK solvers.
+
+#### Visualization Output
+
+The script offers a series of visualizations, with examples shown from the default example, which compares `KDL`, `pick_ik`, and `TRAC_IK` solvers. 
+
+1. **Solve Times**: Box plots showcasing the time taken by each solver to find IK solutions.
+
+<p align="center">
+  <img src="figures/box_plot_solve_time.png" width="700"/>
+</p>
+
+
+2. **Success Rates**: Bar charts illustrating the rate of successful IK solutions for each solver.
+
+<p align="center">
+  <img src="figures/bar_plot_success_rate.png" width="700"/>
+</p>
+
+3. **Position, Orientation, and Joint Errors**: Box plots that highlight the differences between the sampled and computed results for each IK solver.
+
+<p align="center">
+  <img src="figures/box_plot_position_error.png" width="300" style="display:inline-block; margin-right:1px;"/>
+  <img src="figures/box_plot_orientation_error.png" width="300" style="display:inline-block; margin-right:1px;"/>
+  <img src="figures/box_plot_angle_error.png" width="300" style="display:inline-block;"/>
+</p>
+
+
+These visualizations aim at providing side-by-side comparison of different IK solvers, allowing you to make informed decisions about which solver best meets your application requirements.
 
 ### Using Cyclone DDS
 
@@ -214,13 +260,13 @@ as the default DDS middleware. If it's not already configured, follow these step
 - Install Cyclone DDS for your ROS 2 distribution. 
 
 ```bash
-sudo apt install ros-${ROS_DISTRO}-cyclonedds
+sudo apt install ros-${ROS_DISTRO}-rmw-cyclonedds-cpp
 ```
 
 - Set up the necessary environment variables
 
 ```bash
-echo "export RMW_IMPLEMENTATION=cyclonedds" >> ~/.bashrc
+echo "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" >> ~/.bashrc
 ```
 
 - Start new terminal session. 
