@@ -74,6 +74,7 @@ install(DIRECTORY launch config
 
 install(PROGRAMS
   scripts/ik_benchmarking_data_generator.py
+  scripts/ik_benchmarking_data_visualizer.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

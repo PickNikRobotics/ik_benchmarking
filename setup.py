@@ -13,7 +13,8 @@ setup(
     license='Apache License, Version 2.0',
     entry_points={
         'console_scripts': [
-            'run_ik_benchmarking = ik_benchmarking.ik_benchmarking_data_generator:main',
+            'ik_benchmarking_data_generator = ik_benchmarking.ik_benchmarking_data_generator:main',
+            'ik_benchmarking_data_visualizer = ik_benchmarking.ik_benchmarking_data_visualizer:main'
         ],
     }
 )
