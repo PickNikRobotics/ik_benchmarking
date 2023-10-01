@@ -146,18 +146,17 @@ launching the benchmarking process for the respective IK solvers.
 #### How to Run
 
 To execute the script, make sure you completed the installation step and **sourced** your workspace. 
-The package generates output files in the current working directory in which it is executed. 
+The package generates output files in **the current working directory** from which the script is executed. 
 Run the following command to generate IK solving data for benchmarking process:
 
 ```bash
-cd ~/ws_moveit2 #cd into your workspace
+cd ~/ws_moveit2 #cd into your ROS 2 workspace
 source install/setup.bash
 ros2 run ik_benchmarking ik_benchmarking_data_generator.py
 ```
 
-This will automatically start the benchmarking tests for the IK solvers specified in your `ik_benchmarking.yaml` configuration file. 
+This will automatically start collecting the benchmarking data for the IK solvers specified in your `ik_benchmarking.yaml` configuration file. 
 
-Note: Ensure you have the necessary permissions to run the script. You might need to run `chmod +x ik_benchmarking_data_generator.py` to make the script executable.
 
 #### Generated Data 
 
