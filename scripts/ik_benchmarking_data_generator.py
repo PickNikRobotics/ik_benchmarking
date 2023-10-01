@@ -80,9 +80,9 @@ def main():
     for command in launch_commands:
         process = subprocess.Popen(command, shell=True, executable="/bin/bash")
 
-        # Wait for completion or timeout after 30 seconds to run next command
+        # Wait for completion with timeout to keep the processing sequential
         try:
-            process.communicate(timeout=30)
+            process.communicate(timeout=1000)
         except subprocess.TimeoutExpired:
             process.kill()
 
