@@ -1,4 +1,4 @@
-# IK Solvers Benchmarking using ROS2 and MoveIt2
+# MoveIt Inverse Kinematics Benchmarking
 
 ## Introduction
 
@@ -269,5 +269,3 @@ echo "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" >> ~/.bashrc
 ```
 
 - Start new terminal session. 
-
-
