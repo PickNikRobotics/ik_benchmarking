@@ -17,14 +17,16 @@ configuring IK solvers for benchmarking, running the necessary scripts for
 data collection and visualization of the results for easier analysis.
 
 In addition, the architectural components of the package are outlined with
-key classes that enable its functionality. Towards the end, we discuss potential future improvements, ensuring that the package remains aligned with emerging needs and technologies.
+key classes that enable its functionality. Towards the end, we discuss potential future improvements,
+ensuring that the package remains aligned with emerging needs and technologies.
 
 
 ## Installation
 
 In the following steps, the `ik_benchmarking` is assumed to be installed in
 the `ws_moveit2` workspace as it is closely connect with MoveIt 2,
-but feel free to use your own workspace. The default example of `ik_benchmarking` uses `KDL`, `pick_ik`, and `TRAC_IK` solvers.
+but feel free to use your own workspace. The default example of `ik_benchmarking`
+uses `KDL`, `pick_ik`, and `TRAC_IK` solvers.
 
 
 1. **Clone the repository and its dependencies**
@@ -95,7 +97,8 @@ By convention, the MoveIt configuration packages are named `robot_moveit_config`
 
 - `robot_name`: The name of the robot model to be used in the benchmarking process.
 
-- `planning_group`: Indicates the name of the planning group that you wish to use for benchmarking IK solvers. In the example, the planning group is `panda_arm`.
+- `planning_group`: Indicates the name of the planning group that you wish to
+use for benchmarking IK solvers. In the example, the planning group is `panda_arm`.
 
 - `sample_size`: Specifies the number of samples the benchmarking will run.
 For instance, setting it to `10000` means that each IK solver will be tested 10,000 times.
@@ -155,8 +158,10 @@ source install/setup.bash
 ros2 run ik_benchmarking ik_benchmarking_data_generator.py
 ```
 
-This will automatically start collecting the benchmarking data for the IK solvers specified in your `ik_benchmarking.yaml` configuration file.
-
+The data generator script will begin collecting benchmarking data and save the
+details in a CSV file for each solver in **the current working directory**.
+The files will be named `<solver_name>_ik_benchmarking_data.csv`,
+with the `solver_name` retrieved from the `ik_benchmarking.yaml` config file.
 
 #### Generated Data
 
@@ -176,12 +181,8 @@ robot tip link orientation from forward and inverse kinematics.
 **Joint Error:** This is calculated as the Euclidean distance between the sampled joint values used to
 calculated forward kinematics and the joint values resulting from the inverse kinematics solution.
 
-The data generator script saves these details in a CSV file for each solver.
-The files are named by `<solver_name>_ik_benchmarking_data.csv`,
-while the `solver_name` is loaded from the `ik_benchmarking.yaml` config file.
-
 Note: The command at the start of this section generates the files in the directory `~/ws_moveit2`.
-The setting of the desirable output directory is to be implemented soon.
+The setting of the desirable output directory for the data generator script is under development.
 
 ### Visualizing the Benchmarking Data
 
