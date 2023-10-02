@@ -269,4 +269,6 @@ sudo apt install ros-${ROS_DISTRO}-rmw-cyclonedds-cpp
 echo "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" >> ~/.bashrc
 ```
 
-- Start new terminal session.
+- Start new terminal session to apply the changes.
+
+These steps will configure ROS 2 to use Cyclone DDS as the default middleware for communication.
