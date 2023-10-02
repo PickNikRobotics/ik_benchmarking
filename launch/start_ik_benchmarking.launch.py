@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import sys
 import yaml
@@ -9,12 +10,14 @@ from launch_ros.actions import Node
 from moveit_configs_utils import MoveItConfigsBuilder
 from ament_index_python.packages import get_package_share_directory
 
+
 def load_benchmarking_config(ik_benchmarking_pkg, ik_benchmarking_config):
     # Construct the configuration file path
-    file_path = os.path.join(get_package_share_directory(ik_benchmarking_pkg),
-                             "config",
-                             ik_benchmarking_config
-                             )
+    file_path = os.path.join(
+        get_package_share_directory(ik_benchmarking_pkg),
+        "config",
+        ik_benchmarking_config,
+    )
     # Open file and parse content
     with open(file_path, "r") as config_file:
         config_data = yaml.safe_load(config_file)
@@ -27,74 +30,77 @@ def load_benchmarking_config(ik_benchmarking_pkg, ik_benchmarking_config):
             raise ValueError(f"Missing required configuration key {key}")
         return value
 
-    moveit_config_pkg = get_config_data('moveit_config_pkg')
-    robot_name = get_config_data('robot_name')
-    planning_group = get_config_data('planning_group')
-    sample_size = get_config_data('sample_size')
+    moveit_config_pkg = get_config_data("moveit_config_pkg")
+    robot_name = get_config_data("robot_name")
+    planning_group = get_config_data("planning_group")
+    sample_size = get_config_data("sample_size")
 
     # Extract IK solvers details
     ik_solvers_list = []
-    ik_solvers_data = get_config_data('ik_solvers')
+    ik_solvers_data = get_config_data("ik_solvers")
 
     for ik_value in ik_solvers_data:
-        ik_solver_name = ik_value.get('name')
-        ik_solver_kinematics_file = ik_value.get('kinematics_file')
+        ik_solver_name = ik_value.get("name")
+        ik_solver_kinematics_file = ik_value.get("kinematics_file")
 
-        ik_solvers_list.append({
-            'name': ik_solver_name,
-            'kinematics_file': ik_solver_kinematics_file
-        })
+        ik_solvers_list.append(
+            {"name": ik_solver_name, "kinematics_file": ik_solver_kinematics_file}
+        )
 
     # Return a dictionary to avoid errors due to return order
     return {
-        'moveit_config_pkg': moveit_config_pkg,
-        'robot_name': robot_name,
-        'planning_group': planning_group,
-        'sample_size': sample_size,
-        'ik_solvers': ik_solvers_list
+        "moveit_config_pkg": moveit_config_pkg,
+        "robot_name": robot_name,
+        "planning_group": planning_group,
+        "sample_size": sample_size,
+        "ik_solvers": ik_solvers_list,
     }
+
 
 # Utilize Opaque functions to retrieve the string values of launch arguments
 def prepare_benchmarking(context, *args, **kwargs):
-    
     # Load the ik_benchmarking configuration data
     ik_benchmarking_pkg = "ik_benchmarking"
     ik_benchmarking_config = "ik_benchmarking.yaml"
     benchmarking_config = load_benchmarking_config(
-        ik_benchmarking_pkg, ik_benchmarking_config)
+        ik_benchmarking_pkg, ik_benchmarking_config
+    )
 
     # Get the actual values of ik_solver and kinematics file
-    ik_solver_name = LaunchConfiguration('ik_solver_name').perform(context)
-    kinematics_file_name = ''
+    ik_solver_name = LaunchConfiguration("ik_solver_name").perform(context)
+    kinematics_file_name = ""
 
-    if ik_solver_name != '':
+    if ik_solver_name != "":
         found = False
-        for _, ik_solver in enumerate(benchmarking_config['ik_solvers']):
-            if ik_solver['name'] == ik_solver_name:
+        for _, ik_solver in enumerate(benchmarking_config["ik_solvers"]):
+            if ik_solver["name"] == ik_solver_name:
                 found = True
-                kinematics_file_name = ik_solver['kinematics_file']
+                kinematics_file_name = ik_solver["kinematics_file"]
                 break
-        
+
         if not found:
             print(
-                f"\n Error: The requested IK solver name {ik_solver_name} is not available in the ik_benchmarking configuration file.\n")
+                f"\n Error: The requested IK solver name {ik_solver_name} is not available in the ik_benchmarking configuration file.\n"
+            )
             exit(1)
     else:
-        print(f"\n Error: The 'ik_solver_name' argument should be provided when starting the 'start_ik_benchmarking.launch.py' file.\n")
+        print(
+            f"\n Error: The 'ik_solver_name' argument should be provided when starting the 'start_ik_benchmarking.launch.py' file.\n"
+        )
         exit(1)
 
     # Build moveit_config using the robot name and kinematic file
-    robot_name = benchmarking_config['robot_name']
+    robot_name = benchmarking_config["robot_name"]
 
-    moveit_config = (MoveItConfigsBuilder(robot_name)
-                     .robot_description_kinematics(
-        file_path=os.path.join(
-            get_package_share_directory(
-                benchmarking_config['moveit_config_pkg']),
-            "config",
-            kinematics_file_name,
+    moveit_config = (
+        MoveItConfigsBuilder(robot_name)
+        .robot_description_kinematics(
+            file_path=os.path.join(
+                get_package_share_directory(benchmarking_config["moveit_config_pkg"]),
+                "config",
+                kinematics_file_name,
+            )
         )
-    )
         .to_moveit_configs()
     )
 
@@ -108,14 +114,15 @@ def prepare_benchmarking(context, *args, **kwargs):
             moveit_config.robot_description_semantic,
             moveit_config.robot_description_kinematics,
             {
-                "planning_group": benchmarking_config['planning_group'],
-                "sample_size": benchmarking_config['sample_size']
+                "planning_group": benchmarking_config["planning_group"],
+                "sample_size": benchmarking_config["sample_size"],
             },
         ],
     )
 
     print(
-        f'\n Running calculations for IK Solver: {ik_solver_name} \n',)
+        f"\n Running calculations for IK Solver: {ik_solver_name} \n",
+    )
 
     # Start benchmarking client node with the same parameters as the server, but with delay
     benchmarking_client_node = Node(
@@ -127,25 +134,29 @@ def prepare_benchmarking(context, *args, **kwargs):
             moveit_config.robot_description_semantic,
             moveit_config.robot_description_kinematics,
             {
-                "planning_group": benchmarking_config['planning_group'],
-                "sample_size": benchmarking_config['sample_size'],
-                "ik_solver": ik_solver_name
+                "planning_group": benchmarking_config["planning_group"],
+                "sample_size": benchmarking_config["sample_size"],
+                "ik_solver": ik_solver_name,
             },
         ],
     )
 
     # Delay the client node launch for two seconds till the server is fully started
     delayed_benchmarking_client_node = TimerAction(
-        period=2.0, actions=[benchmarking_client_node])
-    
+        period=2.0, actions=[benchmarking_client_node]
+    )
+
     return [benchmarking_server_node, delayed_benchmarking_client_node]
+
 
 def generate_launch_description():
     # Declare a launch argument to decide the IK solver and kinematic file to use
     declare_ik_solver_name_arg = DeclareLaunchArgument(
-        'ik_solver_name',
-        default_value='',
-        description="IK solver name corresponding to the name value in ik_benchmarking.yaml config file."
+        "ik_solver_name",
+        default_value="",
+        description="IK solver name corresponding to the name value in ik_benchmarking.yaml config file.",
     )
 
-    return LaunchDescription([declare_ik_solver_name_arg, OpaqueFunction(function=prepare_benchmarking)])
+    return LaunchDescription(
+        [declare_ik_solver_name_arg, OpaqueFunction(function=prepare_benchmarking)]
+    )

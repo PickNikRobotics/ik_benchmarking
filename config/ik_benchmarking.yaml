@@ -7,9 +7,9 @@ ik_solvers:  # List of IK solvers and their kinematics configuration files to in
 
   - name: KDL  # Name of the IK solver
     kinematics_file: kdl_kinematics.yaml  # Name of the IK solver's kinematics configuration file
-    
+
   - name: TRAC_IK
     kinematics_file: trac_ik_kinematics.yaml
-  
+
   - name: pick_ik
     kinematics_file: pick_ik_kinematics.yaml
