@@ -67,7 +67,7 @@ def main():
         )
         print(", ".join(conflict_csv_filenames))
         user_input = input(
-            "\nDo you want to permantently delete them and continue the benchmarking? (y/n): "
+            "\nDo you want to permanently delete them and continue the benchmarking? (y/n): "
         )
 
         if user_input.lower() == "y":
