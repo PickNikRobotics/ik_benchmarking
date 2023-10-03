@@ -170,7 +170,7 @@ understand the performance and accuracy of the IK solver being evaluated.
 
 **Solve Time:** is the time taken to find an IK solution, measured in microseconds.
 
-**Solve Rate:** is the percentage of the successful trials to the total IK solution trials.
+**Success Rate:** is a value between 0 and 1, representing the ratio of successful trials to the total IK solution trials.
 
 **Position Error:** After finding the IK solution, the function calculates the position error by
 comparing the robot tip link position from both the forward and inverse kinematics processes.

@@ -110,7 +110,8 @@ class IKBenchmarking {
     /**
      * @brief Get the success rate of the solver.
      *
-     * @return Success rate as a percentage.
+     * @return Success rate as a value between 0 and 1, representing
+     * the ratio of successful trials to the total IK solution trials.
      */
     double get_success_rate() const;
 
