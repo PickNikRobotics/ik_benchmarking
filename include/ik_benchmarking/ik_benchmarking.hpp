@@ -171,5 +171,5 @@ class IKBenchmarking {
     /**
      * @brief Collect and save the benchmarking data.
      */
-    void gather_date();
+    void gather_data();
 };

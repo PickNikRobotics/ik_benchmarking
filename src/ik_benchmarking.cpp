@@ -138,7 +138,7 @@ void IKBenchmarking::gather_data() {
 
 void IKBenchmarking::run() {
     this->initialize();
-    this->gather_date();
+    this->gather_data();
 
     this->data_file_.close();
 }
