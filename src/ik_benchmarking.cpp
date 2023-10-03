@@ -56,7 +56,7 @@ void IKBenchmarking::initialize() {
     }
 }
 
-void IKBenchmarking::gather_date() {
+void IKBenchmarking::gather_data() {
     // Collect IK solving data
     sample_size_ = node_->get_parameter("sample_size").as_int();
 
