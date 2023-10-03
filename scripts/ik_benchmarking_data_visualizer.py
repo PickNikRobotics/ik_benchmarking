@@ -18,7 +18,7 @@ class DataVisualizerNode(Node):
         # Allow loading the IK benchmarking data from non-current directories
         # using a 'data_directory' parameter that can be passed when running the script
         # the 'data_directory' parameter defaults to current directory, and if no data exist, a warning is printed
-        self.declare_parameter("data_directory", ".")
+        self.declare_parameter("data_directory", os.getcwd())
         self.data_directory = (
             self.get_parameter("data_directory").get_parameter_value().string_value
         )
