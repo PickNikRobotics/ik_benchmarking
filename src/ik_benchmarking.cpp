@@ -130,8 +130,8 @@ void IKBenchmarking::gather_data() {
         std::accumulate(solve_times_.begin(), solve_times_.end(), 0.0) / solve_times_.size();
     success_rate_ = success_count_ / sample_size_;
 
-    RCLCPP_INFO(logger_, "Success rate = %f and average IK solving time is %f ms\n", success_rate_,
-                average_solve_time_);
+    RCLCPP_INFO(logger_, "Success rate = %f and average IK solving time is %f microseconds\n",
+                success_rate_, average_solve_time_);
 
     calculation_done_ = true;
 }
