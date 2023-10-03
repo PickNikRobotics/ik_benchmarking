@@ -178,9 +178,6 @@ comparing the robot tip link position from both the forward and inverse kinemati
 **Orientation Error:** Similarly, an orientation error is calculated by determining the angle between
 robot tip link orientation from forward and inverse kinematics.
 
-**Joint Error:** This is calculated as the Euclidean distance between the sampled joint values used to
-calculated forward kinematics and the joint values resulting from the inverse kinematics solution.
-
 Note: The command at the start of this section generates the files in the directory `~/ws_moveit2`.
 The setting of the desirable output directory for the data generator script is under development.
 
@@ -204,7 +201,7 @@ The script reads the previously generated CSV files, processes the data, and vis
 It processes the data and prepares it for visualization.
 
 - `plot_data()`: This function is responsible for plotting the data. It creates box plots for solve times,
-position, orientation, and joint errors, as well as bar charts for success rates.
+position, and orientation errors, as well as bar charts for success rates.
 
 #### How to Run
 
@@ -240,12 +237,11 @@ The script offers a series of visualizations, with examples shown from the defau
   <img src="figures/bar_plot_success_rate.png" width="700"/>
 </p>
 
-3. **Position, Orientation, and Joint Errors**: Box plots that highlight the differences between the sampled and computed results for each IK solver.
+3. **Position, and Orientation Errors**: Box plots that highlight the differences between the sampled and computed results for each IK solver.
 
 <p align="center">
-  <img src="figures/box_plot_position_error.png" width="300" style="display:inline-block; margin-right:1px;"/>
-  <img src="figures/box_plot_orientation_error.png" width="300" style="display:inline-block; margin-right:1px;"/>
-  <img src="figures/box_plot_angle_error.png" width="300" style="display:inline-block;"/>
+  <img src="figures/box_plot_position_error.png" width="450" style="display:inline-block; margin-right:1px;"/>
+  <img src="figures/box_plot_orientation_error.png" width="450" style="display:inline-block; margin-right:1px;"/>
 </p>
 
 

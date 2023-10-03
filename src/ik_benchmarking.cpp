@@ -117,19 +117,10 @@ void IKBenchmarking::gather_date() {
             Eigen::Quaterniond ik_orientation(ik_tip_link_pose.rotation());
             double orientation_error = orientation.angularDistance(ik_orientation);
 
-            // Calculate joint error (Eucludian distance)
-            std::vector<double> ik_joint_values(joint_model_group_->getVariableCount());
-            robot_state_->copyJointGroupPositions(joint_model_group_, ik_joint_values);
-            double joint_error{0.0};
-            for (size_t j = 0; j < ik_joint_values.size(); ++j) {
-                joint_error += pow(ik_joint_values.at(j) - random_joint_values.at(j), 2);
-            }
-            joint_error = sqrt(joint_error);
-
             data_file_ << i + 1 << ",yes," << solve_time.count() << "," << position_error << ","
-                       << orientation_error << "," << joint_error << "\n";
+                       << orientation_error << "\n";
         } else {
-            data_file_ << i + 1 << ",no,not_available,not_available,not_available,not_available"
+            data_file_ << i + 1 << ",no,not_available,not_available,not_available"
                        << "\n";
         }
     }

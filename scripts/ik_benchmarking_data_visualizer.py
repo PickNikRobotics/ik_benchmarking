@@ -52,12 +52,7 @@ class DataVisualizerNode(Node):
             data = pd.read_csv(file)
 
             # Convert solve_time and errors to numeric
-            for col in [
-                "solve_time",
-                "position_error",
-                "orientation_error",
-                "joints_error",
-            ]:
+            for col in ["solve_time", "position_error", "orientation_error"]:
                 data[col] = pd.to_numeric(data[col], errors="coerce")
 
             data["found_ik"] = data["found_ik"] == "yes"
@@ -100,8 +95,8 @@ class DataVisualizerNode(Node):
         plt.xlabel("IK Solvers")
         plt.show()
 
-        # Box plots for position_error, orientation_error, and joints_error
-        error_types = ["position_error", "orientation_error", "joints_error"]
+        # Box plots for position_error, and orientation_error
+        error_types = ["position_error", "orientation_error"]
 
         for error_type in error_types:
             plt.figure(figsize=(15, 10))

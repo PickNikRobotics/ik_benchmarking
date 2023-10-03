@@ -52,7 +52,7 @@ class IKBenchmarking {
           robot_state_(new moveit::core::RobotState(robot_model_)),
           calculation_done_(false) {
         data_file_.open("ik_benchmarking_data.csv", std::ios::app);
-        data_file_ << "trial,found_ik,solve_time,position_error,orientation_error,joints_error\n";
+        data_file_ << "trial,found_ik,solve_time,position_error,orientation_error\n";
     }
 
     /**
@@ -73,7 +73,7 @@ class IKBenchmarking {
             "ik_benchmarking_data"
             ".csv",
             std::ios::app);
-        data_file_ << "trial,found_ik,solve_time,position_error,orientation_error,joints_error\n";
+        data_file_ << "trial,found_ik,solve_time,position_error,orientation_error\n";
     }
 
     /**
@@ -95,7 +95,7 @@ class IKBenchmarking {
           calculation_done_(false) {
         // Todo: Mohamed, customize data file name based on output file path
         data_file_.open(std::string(solver) + "_ik_benchmarking_data.csv", std::ios::app);
-        data_file_ << "trial,found_ik,solve_time,position_error,orientation_error,joints_error\n";
+        data_file_ << "trial,found_ik,solve_time,position_error,orientation_error\n";
     }
 
     /**
