@@ -93,11 +93,8 @@ def main():
     for command in launch_commands:
         process = subprocess.Popen(command, shell=True, executable="/bin/bash")
 
-        # Wait for completion with timeout to keep the processing sequential
-        try:
-            process.communicate(timeout=1000)
-        except subprocess.TimeoutExpired:
-            process.kill()
+        # Wait indefinitely for completion to ensure sequential processing
+        process.communicate()
 
 
 if __name__ == "__main__":
