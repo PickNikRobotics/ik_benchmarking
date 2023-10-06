@@ -96,7 +96,8 @@ void IKBenchmarking::gather_data() {
         // Solve Inverse kinematics (IK)
         const auto start_time = std::chrono::high_resolution_clock::now();
 
-        bool found_ik = robot_state_->setFromIK(joint_model_group_, tip_link_pose, ik_timeout_);
+        const bool found_ik =
+            robot_state_->setFromIK(joint_model_group_, tip_link_pose, ik_timeout_);
 
         const auto end_time = std::chrono::high_resolution_clock::now();
 
