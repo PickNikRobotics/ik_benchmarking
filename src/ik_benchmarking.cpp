@@ -59,6 +59,7 @@ void IKBenchmarking::initialize() {
 void IKBenchmarking::gather_data() {
     // Collect IK solving data
     sample_size_ = node_->get_parameter("sample_size").as_int();
+    ik_timeout_ = node_->get_parameter("ik_timeout").as_double();
 
     for (size_t i = 0; i < sample_size_; ++i) {
         std::vector<double> random_joint_values;
@@ -95,7 +96,7 @@ void IKBenchmarking::gather_data() {
         // Solve Inverse kinematics (IK)
         const auto start_time = std::chrono::high_resolution_clock::now();
 
-        bool found_ik = robot_state_->setFromIK(joint_model_group_, tip_link_pose, 0.1);
+        bool found_ik = robot_state_->setFromIK(joint_model_group_, tip_link_pose, ik_timeout_);
 
         const auto end_time = std::chrono::high_resolution_clock::now();
 

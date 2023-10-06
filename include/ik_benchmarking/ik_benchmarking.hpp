@@ -156,7 +156,8 @@ class IKBenchmarking {
     std::mt19937 generator_;  ///< Generator for random joint values within bounds.
 
     unsigned int sample_size_;  ///< The number of samples to run for collecting benchmarking data.
-    double success_count_;      ///< Count of successful IK solves from among the whole sample size.
+    double ik_timeout_;  ///< Maximum time (in seconds) allowed for an IK solver to find a solution.
+    double success_count_;  ///< Count of successful IK solves from among the whole sample size.
     std::vector<int> solve_times_;  ///< Times taken for each successful solve, in microseconds.
     double average_solve_time_;     ///< Overall average solve time for all the successful samples.
     double success_rate_;           ///< Overall success rate as a percentage.

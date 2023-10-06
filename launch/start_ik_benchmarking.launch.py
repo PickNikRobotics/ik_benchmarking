@@ -34,6 +34,7 @@ def load_benchmarking_config(ik_benchmarking_pkg, ik_benchmarking_config):
     robot_name = get_config_data("robot_name")
     planning_group = get_config_data("planning_group")
     sample_size = get_config_data("sample_size")
+    ik_timeout = get_config_data("ik_timeout")
 
     # Extract IK solvers details
     ik_solvers_list = []
@@ -53,6 +54,7 @@ def load_benchmarking_config(ik_benchmarking_pkg, ik_benchmarking_config):
         "robot_name": robot_name,
         "planning_group": planning_group,
         "sample_size": sample_size,
+        "ik_timeout": ik_timeout,
         "ik_solvers": ik_solvers_list,
     }
 
@@ -116,6 +118,7 @@ def prepare_benchmarking(context, *args, **kwargs):
             {
                 "planning_group": benchmarking_config["planning_group"],
                 "sample_size": benchmarking_config["sample_size"],
+                "ik_timeout": benchmarking_config["ik_timeout"],
             },
         ],
     )
