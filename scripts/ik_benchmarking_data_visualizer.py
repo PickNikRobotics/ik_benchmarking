@@ -82,7 +82,6 @@ class DataVisualizerNode(Node):
         plt.title("Solve Times for Successful Trials")
         plt.ylabel("Microseconds")
         plt.xlabel("IK Solvers")
-        plt.show()
 
         # Bar chart for success rates
         plt.figure(figsize=(15, 10))
@@ -93,7 +92,6 @@ class DataVisualizerNode(Node):
         plt.title("Success Rate for Each Dataset")
         plt.ylabel("Rate")
         plt.xlabel("IK Solvers")
-        plt.show()
 
         # Box plots for position_error, and orientation_error
         error_types = ["position_error", "orientation_error"]
@@ -119,7 +117,8 @@ class DataVisualizerNode(Node):
             plt.title(f'{error_type.replace("_", " ").title()} for Successful Trials')
             plt.ylabel(error_type.replace("_", " ").title())
             plt.xlabel("IK Solvers")
-            plt.show()
+
+        plt.show()
 
 
 if __name__ == "__main__":
