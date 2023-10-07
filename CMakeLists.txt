@@ -39,7 +39,7 @@ $<INSTALL_INTERFACE:include>)
 target_link_libraries(ik_benchmarking_server rclcpp::rclcpp fmt::fmt)
 target_link_libraries(ik_benchmarking_client rclcpp::rclcpp)
 
-#link against interfaces (actions) generated in the same project
+# link against interfaces (actions) generated in the same project
 rosidl_target_interfaces(ik_benchmarking_server ${PROJECT_NAME} "rosidl_typesupport_cpp")
 rosidl_target_interfaces(ik_benchmarking_client ${PROJECT_NAME} "rosidl_typesupport_cpp")
 
