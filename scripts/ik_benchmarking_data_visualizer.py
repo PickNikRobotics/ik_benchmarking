@@ -64,6 +64,9 @@ class DataVisualizerNode(Node):
         return data_list
 
     def plot_data(self, data_list):
+        # Common light blue color for all plots
+        common_color = sns.color_palette("pastel")[0]
+
         # Box and whisker plot for solve times of successful trials
         plt.figure(figsize=(15, 10))
 
@@ -77,8 +80,15 @@ class DataVisualizerNode(Node):
 
         df_to_plot = pd.DataFrame({"Solve Times": all_data, "Dataset": labels})
 
-        # Plot the boxplot using seaborn
-        sns.boxplot(x="Dataset", y="Solve Times", data=df_to_plot, showfliers=False)
+        # Box plot for solve times
+        sns.boxplot(
+            x="Dataset",
+            y="Solve Times",
+            data=df_to_plot,
+            showfliers=False,
+            color=common_color,
+            boxprops=dict(edgecolor="black"),
+        )
         plt.title("Solve Times for Successful Trials")
         plt.ylabel("Microseconds")
         plt.xlabel("IK Solvers")
@@ -87,13 +97,13 @@ class DataVisualizerNode(Node):
         plt.figure(figsize=(15, 10))
         success_rates = [(file, data["found_ik"].mean()) for file, data in data_list]
         labels, rates = zip(*success_rates)
-        plt.bar(labels, rates)
+        plt.bar(labels, rates, color=common_color, edgecolor="black")
         plt.ylim(0, 1)
         plt.title("Success Rate for Each Dataset")
         plt.ylabel("Rate")
         plt.xlabel("IK Solvers")
 
-        # Box plots for position_error, and orientation_error
+        # Box plot for position_error, and orientation_error
         error_types = ["position_error", "orientation_error"]
 
         for error_type in error_types:
@@ -112,7 +122,12 @@ class DataVisualizerNode(Node):
                 {error_type: all_error_data, "Dataset": error_labels}
             )
             sns.boxplot(
-                x="Dataset", y=error_type, data=df_error_to_plot, showfliers=False
+                x="Dataset",
+                y=error_type,
+                data=df_error_to_plot,
+                showfliers=False,
+                color=common_color,
+                boxprops=dict(edgecolor="black"),
             )
             plt.title(f'{error_type.replace("_", " ").title()} for Successful Trials')
             plt.ylabel(error_type.replace("_", " ").title())
