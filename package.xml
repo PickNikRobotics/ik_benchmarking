@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>ik_benchmarking</name>
+  <version>0.0.0</version>
+  <description>Utilities for IK solver benchmarking with MoveIt 2</description>
+  <maintainer email="mohamed.s.raessa@gmail.com">Mohamed Raessa</maintainer>
+  <license>
+    Apache License, Version 2.0
+    http://www.apache.org/licenses/LICENSE-2.0
+  </license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>rosidl_default_generators</buildtool_depend>
+
+  <buildtool_depend>ament_cmake_python</buildtool_depend>
+
+  <depend>moveit_core</depend>
+  <depend>moveit_ros_planning_interface</depend>
+  <depend>rclcpp</depend>
+  <depend>fmt</depend>
+  <depend>action_msgs</depend>
+  <depend>moveit_configs_utils</depend>
+
+  <depend>rclpy</depend>
+  <depend>python3-pandas</depend>
+  <depend>python3-seaborn</depend>
+
+  <member_of_group>rosidl_interface_packages</member_of_group>
+
+  <!-- Dependencies for the default IK benchmarking example -->
+  <depend>pick_ik</depend>
+  <depend>trac_ik</depend>
+  <depend>moveit_resources_panda_moveit_config</depend>
+  <!-- End of default example dependencies -->
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
