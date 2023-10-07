@@ -104,9 +104,9 @@ class DataVisualizerNode(Node):
         plt.xlabel("IK Solvers")
 
         # Box plot for position_error, and orientation_error
-        error_types = ["position_error", "orientation_error"]
+        error_types = [("position_error", "Meters"), ("orientation_error", "Radians")]
 
-        for error_type in error_types:
+        for error_type, unit in error_types:
             plt.figure(figsize=(15, 10))
             all_error_data = []
             error_labels = []
@@ -130,7 +130,7 @@ class DataVisualizerNode(Node):
                 boxprops=dict(edgecolor="black"),
             )
             plt.title(f'{error_type.replace("_", " ").title()} for Successful Trials')
-            plt.ylabel(error_type.replace("_", " ").title())
+            plt.ylabel(f'{error_type.replace("_", " ").title()} ({unit})')
             plt.xlabel("IK Solvers")
 
         plt.show()
