@@ -153,7 +153,7 @@ The package generates output files in **the current working directory** from whi
 Run the following command to generate IK solving data for benchmarking process:
 
 ```bash
-cd ~/ws_moveit2 #cd into your ROS 2 workspace
+cd ~/ws_moveit2 # cd into your ROS 2 workspace
 source install/setup.bash
 ros2 run ik_benchmarking ik_benchmarking_data_generator.py
 ```
