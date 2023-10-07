@@ -66,7 +66,7 @@ class DataVisualizerNode(Node):
         return data_list
 
     def plot_data(self, data_list):
-        print(f"\nBenchmarking data plots will be saved in the same directory.\n")
+        print(f"\nBenchmarking result plots will be saved in the same directory.\n")
         print(f"{'=' * 60}")
 
         # Common light blue color for all plots
@@ -97,7 +97,7 @@ class DataVisualizerNode(Node):
         plt.title("Solve Times for Successful Trials")
         plt.ylabel("Microseconds")
         plt.xlabel("IK Solvers")
-        plt.savefig("solve_times.png")
+        plt.savefig(os.path.join(self.data_directory, "solve_times.png"))
 
         # Bar chart for success rates
         plt.figure(figsize=(15, 10))
@@ -108,7 +108,7 @@ class DataVisualizerNode(Node):
         plt.title("Success Rate for Each Dataset")
         plt.ylabel("Rate")
         plt.xlabel("IK Solvers")
-        plt.savefig("success_rates.png")
+        plt.savefig(os.path.join(self.data_directory, "success_rates.png"))
 
         # Box plot for position_error, and orientation_error
         error_types = [("position_error", "Meters"), ("orientation_error", "Radians")]
@@ -139,7 +139,7 @@ class DataVisualizerNode(Node):
             plt.title(f'{error_type.replace("_", " ").title()} for Successful Trials')
             plt.ylabel(f'{error_type.replace("_", " ").title()} ({unit})')
             plt.xlabel("IK Solvers")
-            plt.savefig(f"{error_type}.png")
+            plt.savefig(os.path.join(self.data_directory, f"{error_type}.png"))
 
 
 if __name__ == "__main__":
