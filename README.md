@@ -29,11 +29,18 @@ but feel free to use your own workspace. The default example of `ik_benchmarking
 uses `KDL`, `pick_ik`, and `TRAC_IK` solvers.
 
 
-1. **Clone the repository and its dependencies**
+1. **Clone the repository and install dependencies**
     ```bash
     cd ~/ws_moveit2/src
     git clone https://github.com/Robotawi/ik_benchmarking.git
     vcs import < ik_benchmarking/.repos
+
+    # Navigate back to workspace root
+    cd ..
+
+    # Install package dependencies
+    rosdep update
+    rosdep install -r --from-paths src --ignore-src --rosdistro $ROS_DISTRO -y
     ```
 
 2. **Build the ik_benchmarking and IK solvers packages as follows**
