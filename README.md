@@ -33,7 +33,7 @@ uses `KDL`, `pick_ik`, and `TRAC_IK` solvers.
     ```bash
     cd ~/ws_moveit2/src
     git clone https://github.com/Robotawi/ik_benchmarking.git
-    vcs import ik_benchmarking/.repos
+    vcs import < ik_benchmarking/.repos
     ```
 
 2. **Build the ik_benchmarking and IK solvers packages as follows**
