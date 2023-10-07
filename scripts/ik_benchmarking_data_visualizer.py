@@ -26,7 +26,7 @@ class DataVisualizerNode(Node):
         print(
             f"\nThe benchmarking CSV files will be loaded from the directory:\n\n{self.data_directory}"
         )
-        print(f"{'=' * 60}")
+        # print(f"{'=' * 60}")
 
         self.run_visualization()
 
@@ -38,6 +38,8 @@ class DataVisualizerNode(Node):
             self.get_logger().warn(
                 f"No IK benchmarking CSV data files found in the directory: {self.data_directory}"
             )
+            print(f"{'=' * 60}")
+
             rclpy.shutdown()
             return
 
@@ -64,6 +66,9 @@ class DataVisualizerNode(Node):
         return data_list
 
     def plot_data(self, data_list):
+        print(f"\nBenchmarking data plots will be saved in the same directory.\n")
+        print(f"{'=' * 60}")
+
         # Common light blue color for all plots
         common_color = sns.color_palette("pastel")[0]
 
@@ -92,6 +97,7 @@ class DataVisualizerNode(Node):
         plt.title("Solve Times for Successful Trials")
         plt.ylabel("Microseconds")
         plt.xlabel("IK Solvers")
+        plt.savefig("solve_times.png")
 
         # Bar chart for success rates
         plt.figure(figsize=(15, 10))
@@ -102,6 +108,7 @@ class DataVisualizerNode(Node):
         plt.title("Success Rate for Each Dataset")
         plt.ylabel("Rate")
         plt.xlabel("IK Solvers")
+        plt.savefig("success_rates.png")
 
         # Box plot for position_error, and orientation_error
         error_types = [("position_error", "Meters"), ("orientation_error", "Radians")]
@@ -132,8 +139,7 @@ class DataVisualizerNode(Node):
             plt.title(f'{error_type.replace("_", " ").title()} for Successful Trials')
             plt.ylabel(f'{error_type.replace("_", " ").title()} ({unit})')
             plt.xlabel("IK Solvers")
-
-        plt.show()
+            plt.savefig(f"{error_type}.png")
 
 
 if __name__ == "__main__":
