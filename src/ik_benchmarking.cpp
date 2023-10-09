@@ -41,7 +41,7 @@ void IKBenchmarking::gather_data() {
         }
 
         // Generate a random state and solve Forward Kinematics (FK)
-        robot_state_->setToRandomPositions();
+        robot_state_->setToRandomPositions(joint_model_group_, generator_);
         robot_state_->updateLinkTransforms();
         const Eigen::Isometry3d tip_link_pose =
             robot_state_->getGlobalLinkTransform(tip_link_name_);
@@ -61,7 +61,7 @@ void IKBenchmarking::gather_data() {
         RCLCPP_DEBUG(logger_, "The sampled random joint values are:\n%s\n", ss.str().c_str());
 
         // Randomize the initial seed state of the robot before solving IK
-        robot_state_->setToRandomPositions(joint_model_group_);
+        robot_state_->setToRandomPositions(joint_model_group_, generator_);
         robot_state_->updateLinkTransforms();
 
         // Solve Inverse kinematics (IK)
