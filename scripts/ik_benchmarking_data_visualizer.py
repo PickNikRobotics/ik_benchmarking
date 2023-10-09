@@ -26,7 +26,6 @@ class DataVisualizerNode(Node):
         print(
             f"\nThe benchmarking CSV files will be loaded from the directory:\n\n{self.data_directory}"
         )
-        # print(f"{'=' * 60}")
 
         self.run_visualization()
 
@@ -56,9 +55,6 @@ class DataVisualizerNode(Node):
             # Convert solve_time and errors to numeric
             for col in ["solve_time", "position_error", "orientation_error"]:
                 data[col] = pd.to_numeric(data[col], errors="coerce")
-
-            data["found_ik"] = data["found_ik"] == "yes"
-
             # Process the filename and remove the common suffix
             file_label = os.path.basename(file).replace("_ik_benchmarking_data.csv", "")
             data_list.append((file_label, data))
@@ -68,9 +64,6 @@ class DataVisualizerNode(Node):
     def plot_data(self, data_list):
         print(f"\nBenchmarking result plots will be saved in the same directory.\n")
         print(f"{'=' * 60}")
-
-        # Common light blue color for all plots
-        common_color = sns.color_palette("pastel")[0]
 
         # Box and whisker plot for solve times of successful trials
         plt.figure(figsize=(15, 10))
@@ -82,17 +75,16 @@ class DataVisualizerNode(Node):
             success_data = data[data["found_ik"]]
             all_data.extend(success_data.dropna(subset=["solve_time"])["solve_time"])
             labels.extend([file] * len(success_data))
-
-        df_to_plot = pd.DataFrame({"Solve Times": all_data, "Dataset": labels})
+        df_for_boxplot = pd.DataFrame({"Solve Times": all_data, "Dataset": labels})
 
         # Box plot for solve times
         sns.boxplot(
             x="Dataset",
             y="Solve Times",
-            data=df_to_plot,
+            data=df_for_boxplot,
             showfliers=False,
-            color=common_color,
-            boxprops=dict(edgecolor="black"),
+            boxprops={"edgecolor": "black"},
+            palette="Blues",
         )
         plt.title("Solve Times for Successful Trials")
         plt.ylabel("Microseconds")
@@ -100,10 +92,20 @@ class DataVisualizerNode(Node):
         plt.savefig(os.path.join(self.data_directory, "solve_times.png"))
 
         # Bar chart for success rates
-        plt.figure(figsize=(15, 10))
-        success_rates = [(file, data["found_ik"].mean()) for file, data in data_list]
+        success_rates = [
+            (f'{file}\n{100 * data["found_ik"].mean():.2f}%', data["found_ik"].mean())
+            for file, data in data_list
+        ]
         labels, rates = zip(*success_rates)
-        plt.bar(labels, rates, color=common_color, edgecolor="black")
+        df_for_barplot = pd.DataFrame({"Success Rates": rates, "Dataset": labels})
+        plt.figure(figsize=(15, 10))
+        sns.barplot(
+            x="Dataset",
+            y="Success Rates",
+            data=df_for_barplot,
+            edgecolor="black",
+            palette="Blues",
+        )
         plt.ylim(0, 1)
         plt.title("Success Rate for Each Dataset")
         plt.ylabel("Rate")
@@ -125,16 +127,16 @@ class DataVisualizerNode(Node):
                 )
                 error_labels.extend([file] * len(success_data))
 
-            df_error_to_plot = pd.DataFrame(
+            df_error_for_plot = pd.DataFrame(
                 {error_type: all_error_data, "Dataset": error_labels}
             )
             sns.boxplot(
                 x="Dataset",
                 y=error_type,
-                data=df_error_to_plot,
+                data=df_error_for_plot,
                 showfliers=False,
-                color=common_color,
-                boxprops=dict(edgecolor="black"),
+                boxprops={"edgecolor": "black"},
+                palette="Blues",
             )
             plt.title(f'{error_type.replace("_", " ").title()} for Successful Trials')
             plt.ylabel(f'{error_type.replace("_", " ").title()} ({unit})')

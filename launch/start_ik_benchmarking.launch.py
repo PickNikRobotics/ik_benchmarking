@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
-import sys
 import yaml
 from launch import LaunchDescription
-from launch.actions import TimerAction
 from launch.actions import DeclareLaunchArgument, OpaqueFunction
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
@@ -34,7 +32,9 @@ def load_benchmarking_config(ik_benchmarking_pkg, ik_benchmarking_config):
     robot_name = get_config_data("robot_name")
     planning_group = get_config_data("planning_group")
     sample_size = get_config_data("sample_size")
+    random_seed = get_config_data("random_seed")
     ik_timeout = get_config_data("ik_timeout")
+    ik_iteration_display_step = get_config_data("ik_iteration_display_step")
 
     # Extract IK solvers details
     ik_solvers_list = []
@@ -54,7 +54,9 @@ def load_benchmarking_config(ik_benchmarking_pkg, ik_benchmarking_config):
         "robot_name": robot_name,
         "planning_group": planning_group,
         "sample_size": sample_size,
+        "random_seed": random_seed,
         "ik_timeout": ik_timeout,
+        "ik_iteration_display_step": ik_iteration_display_step,
         "ik_solvers": ik_solvers_list,
     }
 
@@ -117,8 +119,12 @@ def prepare_benchmarking(context, *args, **kwargs):
             moveit_config.robot_description_kinematics,
             {
                 "planning_group": benchmarking_config["planning_group"],
+                "random_seed": benchmarking_config["random_seed"],
                 "sample_size": benchmarking_config["sample_size"],
                 "ik_timeout": benchmarking_config["ik_timeout"],
+                "ik_iteration_display_step": benchmarking_config[
+                    "ik_iteration_display_step"
+                ],
             },
         ],
     )
@@ -144,12 +150,7 @@ def prepare_benchmarking(context, *args, **kwargs):
         ],
     )
 
-    # Delay the client node launch for two seconds till the server is fully started
-    delayed_benchmarking_client_node = TimerAction(
-        period=2.0, actions=[benchmarking_client_node]
-    )
-
-    return [benchmarking_server_node, delayed_benchmarking_client_node]
+    return [benchmarking_server_node, benchmarking_client_node]
 
 
 def generate_launch_description():
