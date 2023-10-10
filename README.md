@@ -74,7 +74,7 @@ Below is a breakdown of the default example configuration file's structure:
 
 ```yaml
 moveit_config_pkg: moveit_resources_panda_moveit_config
-robot_name: panda
+robot_name: moveit_resources_panda
 planning_group: panda_arm
 sample_size: 10000
 random_seed: 12345
