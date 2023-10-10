@@ -3,32 +3,10 @@
 #include <limits.h>
 #include <moveit/move_group_interface/move_group_interface.h>
 #include <moveit/robot_model_loader/robot_model_loader.h>
+#include <random_numbers/random_numbers.h>
 
 #include <fstream>
-#include <random>
 #include <rclcpp/rclcpp.hpp>
-
-/**
- * @brief Represents the minimum and maximum positional limits of a joint.
- *
- * This struct is used to define the bounds for the position of a robotic joint.
- * It stores the minimum and maximum allowed positions for the joint, and is initialized
- * to the broadest possible range by default.
- */
-struct JointBounds {
-    double min_position;  ///< The minimum allowed position for the joint.
-    double max_position;  ///< The maximum allowed position for the joint.
-
-    /**
-     * @brief Default constructor for JointBounds.
-     *
-     * Initialize min_position to the smalled representable double value,
-     * and max_position to the largest representable double value.
-     */
-    JointBounds()
-        : min_position(std::numeric_limits<double>::min()),
-          max_position(std::numeric_limits<double>::max()) {}
-};
 
 /**
  * @brief Class for Inverse Kinematics Benchmarking
@@ -81,7 +59,7 @@ class IKBenchmarking {
      *
      * @param node_name The name of the node to create.
      * @param solver The name of the IK solver to use.
-     * @param output_file The path of the output file for data collection.
+     * @param output_file The name of the output file for data collection.
      * @param options Additional node options.
      */
     IKBenchmarking(const std::string& node_name, const std::string& solver,
@@ -93,8 +71,7 @@ class IKBenchmarking {
           robot_model_(robot_model_loader_.getModel()),
           robot_state_(new moveit::core::RobotState(robot_model_)),
           calculation_done_(false) {
-        // Todo: Mohamed, customize data file name based on output file path
-        data_file_.open(std::string(solver) + "_ik_benchmarking_data.csv", std::ios::app);
+        data_file_.open(std::string(solver) + "_" + output_file + ".csv", std::ios::app);
         data_file_ << "trial,found_ik,solve_time,position_error,orientation_error\n";
     }
 
@@ -145,18 +122,15 @@ class IKBenchmarking {
     const moveit::core::JointModelGroup*
         joint_model_group_;  ///< Pointer to the joint model group used to get information about the
                              ///< group and solve IK.
-
     std::string
         tip_link_name_;  ///< The name of the tip link in the planning group used to solve IK.
-    std::vector<JointBounds>
-        joint_bounds_;  ///< Vector containing the bounds of each joint in the planning group.
-    std::vector<std::string> joint_names_;  ///< Names of the joints in the planning group.
 
-    std::random_device rd_;   ///< Random device to seed random number generator.
-    std::mt19937 generator_;  ///< Generator for random joint values within bounds.
+    random_numbers::RandomNumberGenerator
+        generator_;  ///< Generator for random joint values within bounds.
 
-    unsigned int sample_size_;  ///< The number of samples to run for collecting benchmarking data.
+    size_t sample_size_;  ///< The number of samples to run for collecting benchmarking data.
     double ik_timeout_;  ///< Maximum time (in seconds) allowed for an IK solver to find a solution.
+    size_t ik_iteration_display_step_;  ///< Number of IK solve attempts between displaying updates.
     double success_count_;  ///< Count of successful IK solves from among the whole sample size.
     std::vector<int> solve_times_;  ///< Times taken for each successful solve, in microseconds.
     double average_solve_time_;     ///< Overall average solve time for all the successful samples.

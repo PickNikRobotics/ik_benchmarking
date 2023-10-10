@@ -25,33 +25,27 @@ ensuring that the package remains aligned with emerging needs and technologies.
 
 In the following steps, the `ik_benchmarking` is assumed to be installed in
 the `ws_moveit2` workspace as it is closely connect with MoveIt 2,
-but feel free to use your own workspace. The default example of `ik_benchmarking`
-uses `KDL`, `pick_ik`, and `TRAC_IK` solvers.
+but feel free to use your own workspace.
+The default example of `ik_benchmarking` uses `KDL`, `bio_ik`, and `TRAC_IK` solvers.
 
 
 1. **Clone the repository and install dependencies**
     ```bash
     cd ~/ws_moveit2/src
-    git clone https://github.com/Robotawi/ik_benchmarking.git
+    git clone https://github.com/PickNikRobotics/ik_benchmarking.git
     vcs import < ik_benchmarking/.repos
-
-    # Navigate back to workspace root
-    cd ..
 
     # Install package dependencies
     rosdep update
-    rosdep install -r --from-paths src --ignore-src --rosdistro $ROS_DISTRO -y
+    rosdep install -r --from-paths . --ignore-src --rosdistro $ROS_DISTRO -y
     ```
 
-2. **Build the ik_benchmarking and IK solvers packages as follows**
+2. **Build the workspace as follows**
     ```bash
     cd ~/ws_moveit2
-    colcon build --packages-select ik_benchmarking pick_ik trac_ik --symlink-install
-    ```
-    If you made a fresh workspace, build the whole workspace
-    ```bash
     colcon build --symlink-install
     ```
+
 Note: Including the `--symlink-install` flag is advantageous as it allows you
 to make changes to the package files without requiring a complete rebuild of the workspace.
 This applies only to files that are interpreted at run time, like YAML, Python scripts, etc.
@@ -71,18 +65,21 @@ IK solvers for benchmarking purposes.
 ### Configuration via `ik_benchmarking.yaml`
 
 Before initiating the benchmarking process, ensure that the `ik_benchmarking.yaml`
-configuration file is tailored according to your needs. This file allows users to
-define various settings such as the MoveIt configuration package to load the robot model,
-the planning group for the robot pre-defined within the MoveIt configuration package,
-the sample size, and the IK solvers intended for testing.
+configuration file is tailored according to your needs.
+This file allows users to define various settings such as the
+MoveIt configuration package to load the robot model,
+the planning group for the robot pre-defined within the MoveIt configuration package, the sample size, and the IK solvers intended for testing.
 
 Below is a breakdown of the default example configuration file's structure:
 
 ```yaml
 moveit_config_pkg: moveit_resources_panda_moveit_config
-robot_name: panda
+robot_name: moveit_resources_panda
 planning_group: panda_arm
 sample_size: 10000
+random_seed: 12345
+ik_timeout: 0.1
+ik_iteration_display_step: 1000
 
 ik_solvers:
   - name: KDL
@@ -91,8 +88,8 @@ ik_solvers:
   - name: TRAC_IK
     kinematics_file: trac_ik_kinematics.yaml
 
-  - name: pick_ik
-    kinematics_file: pick_ik_kinematics.yaml
+  - name: bio_ik
+    kinematics_file: bio_ik_kinematics.yaml
 ```
 
 #### Key Components
@@ -115,7 +112,7 @@ For instance, setting it to `10000` means that each IK solver will be tested 10,
 The `ik_solvers` section presents the list of solvers to be benchmarked:
 
 - `name`: Represents the name of the IK solver you wish to benchmark,
-such as `KDL`, `TRAC_IK`, `pick_ik`, or other solvers.
+such as `KDL`, `TRAC_IK`, `bio_ik`, or other solvers.
 - `kinematics_file`: Specifies the YAML file containing the solver's kinematic configuration.
 This file is conventionally located within the `config` directory of the robot's MoveIt configuration package.
 
@@ -229,26 +226,26 @@ This script reads the benchmarking data and displays a series of plots, providin
 
 #### Visualization Output
 
-The script offers a series of visualizations, with examples shown from the default example, which compares `KDL`, `pick_ik`, and `TRAC_IK` solvers.
+The script offers a series of visualizations, with examples shown from the default example, which compares `KDL`, `bio_ik`, and `TRAC_IK` solvers.
 
 1. **Solve Times**: Box plots showcasing the time taken by each solver to find IK solutions.
 
 <p align="center">
-  <img src="figures/box_plot_solve_time.png" width="700"/>
+  <img src="figures/solve_times.png" width="700"/>
 </p>
 
 
 2. **Success Rates**: Bar charts illustrating the rate of successful IK solutions for each solver.
 
 <p align="center">
-  <img src="figures/bar_plot_success_rate.png" width="700"/>
+  <img src="figures/success_rates.png" width="700"/>
 </p>
 
 3. **Position, and Orientation Errors**: Box plots that highlight the differences between the sampled and computed results for each IK solver.
 
 <p align="center">
-  <img src="figures/box_plot_position_error.png" width="450" style="display:inline-block; margin-right:1px;"/>
-  <img src="figures/box_plot_orientation_error.png" width="450" style="display:inline-block; margin-right:1px;"/>
+  <img src="figures/position_error.png" width="450" style="display:inline-block; margin-right:1px;"/>
+  <img src="figures/orientation_error.png" width="450" style="display:inline-block; margin-right:1px;"/>
 </p>
 
 

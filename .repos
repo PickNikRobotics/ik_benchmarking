@@ -1,9 +1,15 @@
 repositories:
-  pick_ik:
+  # Example MoveIt config package
+  moveit_resources:
     type: git
-    url: https://github.com/PickNikRobotics/pick_ik
-    version: main
+    url: https://github.com/ros-planning/moveit_resources.git
+    version: ros2
+  # IK Solvers
   trac_ik:
     type: git
     url: https://bitbucket.org/traclabs/trac_ik
     version: rolling-devel
+  bio_ik:
+    type: git
+    url: https://github.com/PickNikRobotics/bio_ik.git
+    version: ros2

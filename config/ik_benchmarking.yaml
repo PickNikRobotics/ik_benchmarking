@@ -1,16 +1,18 @@
 moveit_config_pkg: moveit_resources_panda_moveit_config  # Name of the MoveIt configuration package of the robot
-robot_name: panda  # Name of the robot
+robot_name: moveit_resources_panda  # Name of the robot
 planning_group: panda_arm  # Planning group configured inside the MoveIt config package (usually in the file config/robot_name.srdf)
 sample_size: 10000  # Number of samples to run for collecting IK benchmarking data for different solvers
+random_seed: 12345  # Seed to use for random number generation, for generating reproducible results
 ik_timeout: 0.1  # Maximum duration (in seconds) allowed for an IK solver to find a solution before being considered unsuccessful
+ik_iteration_display_step: 1000  # Number of IK solves for printing updates
 
 ik_solvers:  # List of IK solvers and their kinematics configuration files to include in the benchmarking process
 
   - name: KDL  # Name of the IK solver
-    kinematics_file: kdl_kinematics.yaml  # Name of the IK solver's kinematics configuration file
+    kinematics_file: kinematics.yaml  # Name of the IK solver's kinematics configuration file
 
   - name: TRAC_IK
     kinematics_file: trac_ik_kinematics.yaml
 
-  - name: pick_ik
-    kinematics_file: pick_ik_kinematics.yaml
+  - name: bio_ik
+    kinematics_file: bio_ik_kinematics.yaml

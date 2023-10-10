@@ -1,9 +1,14 @@
+#include <chrono>
 #include <functional>
 #include <memory>
 
 #include "ik_benchmarking/action/ik_benchmark.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
+
+namespace {
+constexpr auto kActionClientTimeout = std::chrono::seconds{5};
+}
 
 using IKBenchmark = ik_benchmarking::action::IKBenchmark;
 using Client = rclcpp_action::Client<IKBenchmark>;
@@ -28,8 +33,13 @@ int main(int argc, char const* argv[]) {
         return 1;
     }
 
-    const std::string csv_output_file{ik_solver + std::string("_output")};
+    const std::string csv_output_file = "ik_benchmarking_data";
     auto client = rclcpp_action::create_client<IKBenchmark>(node, "ik_benchmark");
+    if (!client->wait_for_action_server(kActionClientTimeout)) {
+        RCLCPP_ERROR(node->get_logger(), "Timed out waiting for IK Benchmarking server.");
+        rclcpp::shutdown();
+        return 1;
+    }
 
     // Send a goal to the server
     auto goal = IKBenchmark::Goal();

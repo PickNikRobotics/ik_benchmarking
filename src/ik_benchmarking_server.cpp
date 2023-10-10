@@ -68,9 +68,8 @@ void IKBenchmarkingServer::execute(const std::shared_ptr<GoalHandleIKBenchmark> 
     }
     // Todo: Mohamed, handle the feedback publishing
     result->calculation_done = true;
-    result->success_rate = ik_benchmarker.get_success_rate();  // Todo: Mohamed, check this rate
-    result->average_solve_time =
-        ik_benchmarker.get_average_solve_time();  // Todo: Mohamed, check this rate
+    result->success_rate = ik_benchmarker.get_success_rate();
+    result->average_solve_time = ik_benchmarker.get_average_solve_time();
 
     goal_handle->succeed(result);
 

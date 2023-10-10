@@ -15,24 +15,18 @@
 
   <buildtool_depend>ament_cmake_python</buildtool_depend>
 
+  <depend>action_msgs</depend>
+  <depend>fmt</depend>
+  <depend>moveit_configs_utils</depend>
   <depend>moveit_core</depend>
   <depend>moveit_ros_planning_interface</depend>
-  <depend>rclcpp</depend>
-  <depend>fmt</depend>
-  <depend>action_msgs</depend>
-  <depend>moveit_configs_utils</depend>
-
-  <depend>rclpy</depend>
   <depend>python3-pandas</depend>
   <depend>python3-seaborn</depend>
+  <depend>random_numbers</depend>
+  <depend>rclcpp</depend>
+  <depend>rclpy</depend>
 
   <member_of_group>rosidl_interface_packages</member_of_group>
-
-  <!-- Dependencies for the default IK benchmarking example -->
-  <depend>pick_ik</depend>
-  <depend>trac_ik</depend>
-  <depend>moveit_resources_panda_moveit_config</depend>
-  <!-- End of default example dependencies -->
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
