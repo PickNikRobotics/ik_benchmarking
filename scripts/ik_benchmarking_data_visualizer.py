@@ -65,7 +65,7 @@ class DataVisualizerNode(Node):
         print(f"\nBenchmarking result plots will be saved in the same directory.\n")
         print(f"{'=' * 60}")
 
-        # Box and whisker plot for solve times of successful trials
+        # Box plot for solve times of successful trials
         plt.figure(figsize=(15, 10))
 
         all_data = []
