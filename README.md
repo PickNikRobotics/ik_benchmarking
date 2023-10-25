@@ -250,25 +250,3 @@ The script offers a series of visualizations, with examples shown from the defau
 
 
 These visualizations aim at providing side-by-side comparison of different IK solvers, allowing you to make informed decisions about which solver best meets your application requirements.
-
-### Using Cyclone DDS
-
-
-**Note:** To ensure smooth operation of the IK Benchmarking, configure ROS 2 to use Cyclone DDS
-as the default DDS middleware. If it's not already configured, follow these steps:
-
-- Install Cyclone DDS for your ROS 2 distribution.
-
-```bash
-sudo apt install ros-${ROS_DISTRO}-rmw-cyclonedds-cpp
-```
-
-- Set up the necessary environment variables
-
-```bash
-echo "export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp" >> ~/.bashrc
-```
-
-- Start new terminal session to apply the changes.
-
-These steps will configure ROS 2 to use Cyclone DDS as the default middleware for communication.
